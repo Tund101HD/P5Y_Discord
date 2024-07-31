@@ -1,0 +1,66 @@
+package commands.leader;
+
+import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+
+public class startsession extends ListenerAdapter {
+
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        if (event.getName().equalsIgnoreCase("startsession")) {
+            event.deferReply().queue();
+            String minact = event.getOption("min-activity").getAsString();
+
+        }
+    }
+
+
+    @Override
+    public void onCommandAutoCompleteInteraction(CommandAutoCompleteInteractionEvent event) {
+        if (event.getName().equalsIgnoreCase("startsession")) {
+            switch (event.getFocusedOption().getName()){
+                case "min-activity":
+                    String[] words = new String[]{"500", "800", "1000", "1200", "0"};
+                    List<Command.Choice> options = Stream.of(words)
+                            .filter(word -> word.startsWith(event.getFocusedOption().getValue())) // only display words that start with the user's current input
+                            .map(word -> new Command.Choice(word, word)) // map the words to choices
+                            .collect(Collectors.toList());
+                    event.replyChoices(options).queue();
+                    break;
+                case "br":
+                    words = new String[]{"13.0", "12.0", "11.0", "10.0", "9.0", "8.0", "7.0", "6.0", "5.0", "4.0"};
+                    options = Stream.of(words)
+                            .filter(word -> word.startsWith(event.getFocusedOption().getValue()))
+                            .map(word -> new Command.Choice(word, word))
+                            .collect(Collectors.toList());
+                    event.replyChoices(options).queue();
+                    break;
+                case "exclude_id":
+                    words = new String[]{"1146100281273233441"}; //FIXME Liste and gebannten Nutzern aus der Vergangenheit (Bis jetzt nur limi)
+                    options = Stream.of(words)
+                            .filter(word -> word.startsWith(event.getFocusedOption().getValue()))
+                            .map(word -> new Command.Choice(word, word))
+                            .collect(Collectors.toList());
+                    event.replyChoices(options).queue();
+                    break;
+                case "min-priority":
+                    words = new String[]{"3", "2", "1"}; //Imagine
+                    options = Stream.of(words)
+                            .filter(word -> word.startsWith(event.getFocusedOption().getValue()))
+                            .map(word -> new Command.Choice(word, word))
+                            .collect(Collectors.toList());
+                    event.replyChoices(options).queue();
+                    break;
+            }
+
+
+        }
+    }
+}
