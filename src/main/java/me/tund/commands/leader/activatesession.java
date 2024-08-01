@@ -1,4 +1,4 @@
-package commands.leader;
+package me.tund.commands.leader;
 
 public class activatesession {
 

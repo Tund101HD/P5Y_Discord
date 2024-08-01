@@ -1,9 +1,9 @@
-package database;
+package me.tund.database;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import utils.Utilities;
+import me.tund.utils.Utilities;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public class Database {
         }
     }
 
-    private boolean addUserEntry(String uuid, String username, boolean[] brs, String preferred_unit, int preferred_br, String activity, double kd, boolean replace ){
+    public boolean addUserEntry(String uuid, String username, boolean[] brs, String preferred_unit, int preferred_br, String activity, double kd, boolean replace ){
         con = Utilities.checkValidConnection(this.con);
         try (PreparedStatement statement = con.prepareStatement("""
         INSERT INTO user_track(discord_id, in_game_name, `13.0`, `12.0`, 
@@ -58,7 +58,7 @@ public class Database {
         }
     }
 
-    private boolean addSessionEntry(String startime, String endtime, long[] ids, HashMap<Long, Double> playtime, HashMap<Long, Double> waittime, int total_rounds, double winration, double br){
+    public boolean addSessionEntry(String startime, String endtime, Long[] ids, HashMap<Long, Integer> playtime, HashMap<Long, Integer> waittime, int total_rounds, double winration, double br){
         con = Utilities.checkValidConnection(this.con);
         try (PreparedStatement statement = con.prepareStatement("""
         INSERT INTO session_track(starttime, endtime, participants, participants_playtime, participants_waittime, total_rounds, `win-ration`, BR) 
@@ -69,8 +69,8 @@ public class Database {
             statement.setDate(1, new Date(start.getMillis()));
             statement.setDate(2, new Date(end.getMillis()));
             StringBuilder s = new StringBuilder();
-            for (long l : ids){
-                s.append(l+";");
+            for (Long l : ids){
+                s.append(l.longValue()+";");
             }
             statement.setString(3, s.toString());
             s = new StringBuilder();
@@ -89,9 +89,42 @@ public class Database {
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         }catch (Exception e){
-            Logger.getLogger("Database").log(Level.SEVERE, "Something went wrong trying to add a UserEntry. \n Stacktrace: "+ e.getStackTrace());
+            Logger.getLogger("Database").log(Level.SEVERE, "Something went wrong trying to add a UserEntry.", e);
             return false;
         }
+    }
+
+
+    public SquadMember getSquadMemberById(long id){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("""
+        SELECT * from user_track WHERE discord_id = ?
+        """)) {
+            statement.setLong(1, id);
+            ResultSet rs = statement.executeQuery();
+            if(rs.next()){
+                int user_no = rs.getInt("user_no");
+                long discord_id = Long.parseLong(rs.getString("discord_id"));
+                String in_game_name = rs.getString("in_game_name");
+                boolean[] brs = {};
+                for(int i = 0; i<10; i++){
+                    brs[i] = rs.getBoolean(String.valueOf(i+4)+".0");
+                }
+                String preferred_unit = rs.getString("preferred_unit");
+                double preferred_br = rs.getDouble("preferred_br");
+                int activity = rs.getInt("activity");
+                double kd = rs.getDouble("kd");
+                boolean replace = rs.getBoolean("replace");
+                int trainings = rs.getInt("trainings");
+                int cookies = rs.getInt("cookies");
+                SquadMember sq = new SquadMember(user_no, discord_id, in_game_name, brs, preferred_unit, preferred_br, activity, trainings, cookies, kd, replace);
+                return sq;
+            }
+        }catch (Exception e){
+            Logger.getLogger("Database").log(Level.SEVERE, "Something went wrong trying to fetch UserEntry", e);
+            return null;
+        }
+        return null;
     }
 
 }

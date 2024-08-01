@@ -38,4 +38,5 @@ build/
 ### Mac OS ###
 .DS_Store
 /.git/
-/src/main/java/utils/.env
+/src/main/java/me/tund/utils/.env
+/.idea/

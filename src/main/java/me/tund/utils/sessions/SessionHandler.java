@@ -1,13 +1,13 @@
-package utils.sessions;
+package me.tund.utils.sessions;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import me.tund.database.Database;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 import java.util.concurrent.*;
@@ -18,6 +18,7 @@ public class SessionHandler {
 
     private List<Session> sessions = new ArrayList<>();
     private HashMap<Session, ScheduledFuture> sessionMap = new HashMap<>();
+    private Database db = new Database();
     private final Gson gson = new Gson();
     private ScheduledExecutorService executorService;
     private Writer writer;
@@ -97,6 +98,13 @@ public class SessionHandler {
         session.setEnd_time(new Date(time.getMillis()));
         removeSessionFromJson(convertSessionToJson(session)); //remove session with ID
         sessionMap.get(session).cancel(true);
-        Logger.getLogger("SessionHandler").log(Level.INFO, "Session " + session.getSession_id() + " has been saved and closed. Closing time: "+ time);
+        boolean success =db.addSessionEntry(session.getStart_time().toString(), session.getEnd_time().toString(),
+               session.getParticipants().toArray(new Long[100]), session.getParticipant_time_played(),
+                session.getParticipant_time_waited(), session.getTotal_rounds(),
+                (double)(session.getWins()/session.getTotal_rounds()), session.getBattle_rating());
+        if(success)
+            Logger.getLogger("SessionHandler").log(Level.INFO, "Session " + session.getSession_id() + " has been saved and closed. Closing time: "+ time);
+        else
+            Logger.getLogger("SessionHandler").log(Level.WARNING, "Session " + session.getSession_id() + ": Failed to save Session to Database! Timestamp:"+ time);
     }
 }

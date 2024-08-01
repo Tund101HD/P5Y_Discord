@@ -1,4 +1,4 @@
-package utils.sessions;
+package me.tund.utils.sessions;
 
 import java.util.*;
 
