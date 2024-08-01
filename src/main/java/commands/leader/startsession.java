@@ -16,7 +16,13 @@ public class startsession extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equalsIgnoreCase("startsession")) {
             event.deferReply().queue();
-            String minact = event.getOption("min-activity").getAsString();
+            String minact = (event.getOption("min-activity").getAsString()==null || event.getOption("min-activity").getAsString().isEmpty())
+                        ?"0":event.getOption("min-activity").getAsString(); // min activity
+            double br = (event.getOption("br").getAsString()==null || event.getOption("br").getAsString().isEmpty())
+                        ?13.0:event.getOption("br").getAsDouble(); //br
+            String exlude_id = event.getOption("exlude_id").getAsString()==null?"":event.getOption("exlude_id").getAsString(); //CSV von IDs
+            String min_priority = (event.getOption("min-priority").getAsString()==null || event.getOption("min-priority").getAsString().isEmpty())
+                        ?"0":event.getOption("min-priority").getAsString(); //minprio
 
         }
     }
