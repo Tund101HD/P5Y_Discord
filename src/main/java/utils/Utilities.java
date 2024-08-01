@@ -37,8 +37,7 @@ public class Utilities {
                 return con;
             }
         }catch (Exception e){
-            System.out.println(Utilities.class.getName() +" [ERROR] Something went wrong trying to connect to database.");
-            e.printStackTrace();
+            Logger.getLogger("Utilities").log(Level.WARNING, "Something went wrong trying to connect to the Database.", e);
         }
         return con;
     }
