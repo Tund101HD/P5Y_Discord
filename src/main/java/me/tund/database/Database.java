@@ -66,9 +66,10 @@ public class Database {
         """)) {
             statement.setString(1, uuid);
             ResultSet resultSet = statement.executeQuery();
-            return resultSet.next();
+            logger.debug("Received answer from Database for Query FIND_USER_ENTRY. In_Game_Name if found: {}.", resultSet.first());
+            return resultSet.first();
         }catch(Exception e){
-            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getStackTrace());
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
             return false;
         }
     }

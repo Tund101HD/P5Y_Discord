@@ -19,16 +19,16 @@ public class register extends ListenerAdapter {
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
-        event.deferReply().queue();
+        event.deferReply().setEphemeral(true).queue();
         if (event.getUser().isBot()){
-            event.reply("Es tut mir leid, aber nur echte Nutzer können diesen Command anwenden.").setEphemeral(true).complete().deleteOriginal().queue();
+            event.getHook().editOriginal("Es tut mir leid, aber nur echte Nutzer können diesen Command anwenden.").queue();
             return;
         }
         if(db.isUserEntry(event.getUser().getId())){
-            event.reply("Es tut mir leid, aber du bist bereits registriert").setEphemeral(true).complete().deleteOriginal().queue();
+            event.getHook().editOriginal("Es tut mir leid, aber du bist bereits registriert").queue();
             return;
         }
-        event.reply("Bitte sieh in deine DMs um mit der Registration fortzufahren.").setEphemeral(true).complete().deleteOriginal().queue();
+        event.getHook().editOriginal("Bitte sieh in deine DMs um mit der Registration fortzufahren.").queue();
     }
 
 }

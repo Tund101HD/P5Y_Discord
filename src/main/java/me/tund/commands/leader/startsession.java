@@ -34,9 +34,9 @@ public class startsession extends ListenerAdapter {
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
         if (event.getName().equalsIgnoreCase("startsession")) {
 
-            event.deferReply().queue();
+            event.deferReply().setEphemeral(true).queue();
             if (!event.getMember().getRoles().contains(Main.bot.getRoleById(Main.GUILD_ID))) { //FIXME Replace with role id
-                event.reply("Sorry, aber du bist kein Squad-Leader.").queue();
+                event.getHook().editOriginal("Sorry, aber du bist kein Squad-Leader.").queue();
                 return;
             }
             logger.info("Trying to start Session for Squad-Leader {}", event.getMember().getEffectiveName());
@@ -69,6 +69,7 @@ public class startsession extends ListenerAdapter {
             Main.sessionHandler.addSession(session);
             session.addParticipant(session.getLeader_id());
             session.addActive_participant(session.getLeader_id());
+            event.getHook().editOriginal("Session wurde gestartet.").queue();
             logger.info("Session has been added to the handler. Now searching for participants by checking channels. ID={}", session.getSession_id());
 
             //Search in the waiting channel for suitable people. TODO Add people from SessionHadler.waiting
@@ -138,6 +139,7 @@ public class startsession extends ListenerAdapter {
                                     "aus dem Wartebereich in einen Channel gezogen der zu deiner Präferenz passt. " +
                                     "Bitte tausche dich mit " + Main.bot.getUserById(session.getLeader_id()).getEffectiveName() + " aus, welche Rolle du einnehmen sollst.")).queue();
                     session.addActive_participant(entry.getKey().getDiscord_id());
+
                 }
                 session.setActive(true);
 
