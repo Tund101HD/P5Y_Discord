@@ -13,9 +13,10 @@ public class SquadMember {
         private boolean replace = true;
         private int trainings = 0;
         private int cookies = 0;
+        private int priority = 0;
 
 
-        public SquadMember(int user_no, long discord_id, String in_game_name, boolean[] brs, String preferred_unit, double preferred_br, int activity, int trainings, int cookies, double kd, boolean replace) {
+        public SquadMember(int user_no, long discord_id, String in_game_name, boolean[] brs, String preferred_unit, double preferred_br, int activity, int trainings, int cookies, double kd, boolean replace, int priority) {
             this.user_no = user_no;
             this.discord_id = discord_id;
             this.in_game_name = in_game_name;
@@ -27,6 +28,7 @@ public class SquadMember {
             this.replace = replace;
             this.trainings = trainings;
             this.cookies = cookies;
+            this.priority = priority;
         }
 
 
@@ -121,5 +123,17 @@ public class SquadMember {
 
     public void setIn_game_name(String in_game_name) {
         this.in_game_name = in_game_name;
+    }
+
+    public void setPreferred_br(double preferred_br) {
+        this.preferred_br = preferred_br;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
+
+    public void setPriority(int priority) {
+        this.priority = priority;
     }
 }

@@ -3,8 +3,10 @@ package me.tund.utils.sessions;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import me.tund.database.Database;
+import me.tund.database.SquadMember;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -16,25 +18,32 @@ import java.util.logging.Logger;
 
 public class SessionHandler {
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("SessionHandlerClient");
+
     private List<Session> sessions = new ArrayList<>();
+    public  List<SquadMember> waiting = new ArrayList<>();
+
+    public HashMap<SquadMember, List<Session>> waiting_sessions = new HashMap<>();
     private HashMap<Session, ScheduledFuture> sessionMap = new HashMap<>();
+    private ScheduledFuture waitingSession = null;
+
     private Database db = new Database();
     private final Gson gson = new Gson();
     private ScheduledExecutorService executorService;
     private Writer writer;
 
     public SessionHandler() {
+        logger.debug("Initializing SessionHandler; Searching for active-sessions.json");
         try {
             writer = new FileWriter("src/main/resources/active-sessions.json");
         }catch (Exception e){
-            Logger.getLogger("SessionHandler").log(Level.WARNING, "Couldn't find active-session.json in resources.", e);
+            logger.warn("Couldn't find active-session.json in resources. Trying to create file again.");
             try{
                 File file = new File("src/main/resources/active-sessions.json");
                 file.createNewFile();
                 writer = new FileWriter(file);
             }catch (Exception e2){
-                Logger.getLogger("SessionHandler").log(Level.WARNING, "Failed to initialize active-session.json. Guess we're fucked now! :) No saving YAY", e);
-            }
+                logger.error("Failed to initialize active-session.json. Stacktrace: {}", e2.getStackTrace());}
         }
         loadSessionsFromJson();
         startExecutorService();
@@ -63,11 +72,12 @@ public class SessionHandler {
 
     private void startExecutorService(){
         executorService = Executors.newScheduledThreadPool(5);
+        waitingSession = executorService.scheduleAtFixedRate(new SessionWaitingRefreshTask(),0,500, TimeUnit.MILLISECONDS);
         for (Session session : sessions) {
             SessionRefreshTask s = new SessionRefreshTask(session, this);
             sessionMap.put(session, executorService.scheduleAtFixedRate(s ,0,1000, TimeUnit.MILLISECONDS));
         }
-        Logger.getLogger("SessionHandler").log(Level.INFO, "Sessions have been loaded and tasks have been scheduled. Current number of sessions: "+sessions.size());
+        logger.debug("Sessions have been loaded and tasks have been scheduled. Current number of sessions: {}", sessions.size());
     }
 
 
@@ -99,12 +109,12 @@ public class SessionHandler {
         removeSessionFromJson(convertSessionToJson(session)); //remove session with ID
         sessionMap.get(session).cancel(true);
         boolean success =db.addSessionEntry(session.getStart_time().toString(), session.getEnd_time().toString(),
-               session.getParticipants().toArray(new Long[100]), session.getParticipant_time_played(),
+               session.getParticipants().toArray(new Long[255]), session.getParticipant_time_played(),
                 session.getParticipant_time_waited(), session.getTotal_rounds(),
                 (double)(session.getWins()/session.getTotal_rounds()), session.getBattle_rating());
         if(success)
-            Logger.getLogger("SessionHandler").log(Level.INFO, "Session " + session.getSession_id() + " has been saved and closed. Closing time: "+ time);
+            logger.info("Session {} has been saved and closed. Closing time: {}", session.getSession_id(), time);
         else
-            Logger.getLogger("SessionHandler").log(Level.WARNING, "Session " + session.getSession_id() + ": Failed to save Session to Database! Timestamp:"+ time);
+            logger.warn("Session {}: Failed to save Session to Database! Timestamp:{}", session.getSession_id(), time);
     }
 }

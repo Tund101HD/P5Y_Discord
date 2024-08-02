@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import me.tund.utils.Utilities;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.HashMap;
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
 public class Database {
 
     public Connection con;
-
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("DatabaseClient");
 
     public Database(){
         Dotenv dotenv = Dotenv.load();
@@ -29,14 +30,14 @@ public class Database {
         }
     }
 
-    public boolean addUserEntry(String uuid, String username, boolean[] brs, String preferred_unit, int preferred_br, String activity, double kd, boolean replace ){
+    public boolean addUserEntry(String uuid, String username, boolean[] brs, String preferred_unit, int preferred_br, String activity, double kd, boolean replace, int priority){
         con = Utilities.checkValidConnection(this.con);
         try (PreparedStatement statement = con.prepareStatement("""
         INSERT INTO user_track(discord_id, in_game_name, `13.0`, `12.0`, 
                        `11.0`, `10.0`, `9.0`, `8.0`, `7.0`, `6.0`, `5.0`, 
                        `4.0`, prefered_unit, preferred_br, activity, kd,
-                       `replace`)
-        VALUES (?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                       `replace`, priority)
+        VALUES (?, ?, ? , ? , ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """)) {
             statement.setString(1, uuid);
             statement.setString(2, username);
@@ -50,13 +51,28 @@ public class Database {
             statement.setString(15, activity);
             statement.setDouble(16, kd);
             statement.setBoolean(17, replace);
+            statement.setInt(18, priority);
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         }catch(Exception e){
-            Logger.getLogger("Database").log(Level.SEVERE, "Something went wrong trying to add a UserEntry. \n Stacktrace: "+ e.getStackTrace());
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getStackTrace());
             return false;
         }
     }
+    public boolean isUserEntry(String uuid){
+        con = Utilities.checkValidConnection(this.con);
+        try (PreparedStatement statement = con.prepareStatement("""
+        SELECT * FROM user_track WHERE discord_id = ?
+        """)) {
+            statement.setString(1, uuid);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        }catch(Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getStackTrace());
+            return false;
+        }
+    }
+
 
     public boolean addSessionEntry(String startime, String endtime, Long[] ids, HashMap<Long, Integer> playtime, HashMap<Long, Integer> waittime, int total_rounds, double winration, double br){
         con = Utilities.checkValidConnection(this.con);
@@ -89,7 +105,7 @@ public class Database {
             int rowsInserted = statement.executeUpdate();
             return rowsInserted > 0;
         }catch (Exception e){
-            Logger.getLogger("Database").log(Level.SEVERE, "Something went wrong trying to add a UserEntry.", e);
+            logger.error("Something went wrong trying to add a UserEntry. Stacktrace: {}", e.getStackTrace());
             return false;
         }
     }
@@ -117,7 +133,8 @@ public class Database {
                 boolean replace = rs.getBoolean("replace");
                 int trainings = rs.getInt("trainings");
                 int cookies = rs.getInt("cookies");
-                SquadMember sq = new SquadMember(user_no, discord_id, in_game_name, brs, preferred_unit, preferred_br, activity, trainings, cookies, kd, replace);
+                int priority = rs.getInt("priority");
+                SquadMember sq = new SquadMember(user_no, discord_id, in_game_name, brs, preferred_unit, preferred_br, activity, trainings, cookies, kd, replace, priority);
                 return sq;
             }
         }catch (Exception e){
