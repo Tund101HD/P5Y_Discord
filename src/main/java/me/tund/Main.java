@@ -4,7 +4,7 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import me.tund.commands.leader.startsession;
 import io.github.cdimascio.dotenv.Dotenv;
-import me.tund.commands.normal.register;
+import me.tund.commands.normal.register.register;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -17,9 +17,7 @@ import me.tund.utils.sessions.SessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.text.html.Option;
 import java.util.EnumSet;
-import java.util.logging.Level;
 
 
 public class Main {
