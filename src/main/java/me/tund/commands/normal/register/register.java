@@ -32,15 +32,35 @@ public class register extends ListenerAdapter {
             return;
         }
         event.getHook().editOriginal("Bitte sieh in deine DMs um mit der Registration fortzufahren.").queue();
-        event.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> {
-            event.getJDA().addEventListener(new RegisterListener(privateChannel.getIdLong(), event.getMember().getIdLong()));
-            return privateChannel.sendMessage("Bitte klicke auf 'Start' sobald du bereit bist mit der Registration fortzufahren." +
-                    " Du wirst für die Registration Stats brauchen, also stelle sicher dass du dein Warthunder offen hast oder deine Stats" +
-                    "anderst wo, z.B. auf https://thunderskill.com/en ausließt. \n Du kannst die Registration immer abbrechen, in dem du ``ABBRUCH`` schreibst.").addActionRow(
-                    Button.success("button_ui_startregister", "Start"),
-                    Button.danger("button_ui_stopregister", "Abbruch")
-            );
-        }).queue();
+        switch (event.getOption("stat").getAsString().toLowerCase()){
+            case "ign":
+                break;
+            case "rolle":
+                break;
+            case "präf_rolle":
+                break;
+            case "präf_br":
+                break;
+            case "k/d":
+                break;
+            case "activity":
+                break;
+            case "replace":
+                break;
+            case "brs":
+                break;
+            default:
+                event.getMember().getUser().openPrivateChannel().flatMap(privateChannel -> {
+                    event.getJDA().addEventListener(new RegisterListener(privateChannel.getIdLong(), event.getMember().getIdLong()));
+                    return privateChannel.sendMessage("Bitte klicke auf 'Start' sobald du bereit bist mit der Registration fortzufahren." +
+                            " Du wirst für die Registration Stats brauchen, also stelle sicher dass du dein Warthunder offen hast oder deine Stats" +
+                            "anderst wo, z.B. auf https://thunderskill.com/en ausließt. \n Du kannst die Registration immer abbrechen, in dem du ``ABBRUCH`` schreibst.").addActionRow(
+                            Button.success("button_ui_startregister", "Start"),
+                            Button.danger("button_ui_stopregister", "Abbruch")
+                    );
+                }).queue();
+        }
+
     }
 
 }
