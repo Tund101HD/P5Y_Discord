@@ -26,11 +26,11 @@ public class Main {
     private static final Logger logger = LoggerFactory.getLogger("ClientMain");
     public static SessionHandler sessionHandler;
     public final static long GUILD_ID = 1168519713274470400L;
-    public final static long WARTERAUM_ID = 1193295964526608514L;
-    public final static long SQUAD1_GROUND = 1147607587961978900L;
-    public final static long SQUAD2_GROUND = 979779381398487090L;
-    public final static long SQUAD1_AIR = 1193297533473140827L;
-    public final static long SQUAD2_AIR = 1193297587424469012L;
+    public final static long WARTERAUM_ID = 1270850047386452010L;
+    public final static long SQUAD1_GROUND = 1270849917526474793L;
+    public final static long SQUAD2_GROUND = 1270850017548308611L;
+    public final static long SQUAD1_AIR = 1270849826174795887L;
+    public final static long SQUAD2_AIR = 1270849940792541246L;
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -50,13 +50,13 @@ public class Main {
         bot.addEventListener(new register());
         sessionHandler = new SessionHandler();
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
-                Commands.slash("register", "Registriere dich um bei CW mitzumachen."),
+                Commands.slash("register", "Registriere dich um bei CW mitzumachen.").addOptions(new OptionData(OptionType.STRING, "stat", "Welchen Wert du aktualisieren möchtest oder ob du von Vorne Anfangen möchtest.", false, true)),
                 Commands.slash("startsession", "Starte eine CW-Session für Squad1/2. Du musst dich dafür in einem Channel befinden.")
                         .addOptions(
                                 new OptionData(OptionType.STRING, "min-activity", "Die Mindestaktivität die ein Nutzer benötigt um automatisch gewählt zu werden.",false, true),
-                                new OptionData(OptionType.NUMBER, "br", "Auf welchen BR die Session gespielt wird. Es werden nur Nutzer berücksichtigt die das BR haben!",false, true),
+                                new OptionData(OptionType.STRING, "br", "Auf welchen BR die Session gespielt wird. Es werden nur Nutzer berücksichtigt die das BR haben!",false, true),
                                 new OptionData(OptionType.STRING, "exclude_id", "Eine Liste and (Discord-)IDs die nicht Berücksichtigt werden soll, getrennt durch Kommas.",false, true),
-                                new OptionData(OptionType.NUMBER, "min-priority", "Die Mindestpriorität, die ein Nutzer haben soll um automatisch gewählt zu werden.",false, true)
+                                new OptionData(OptionType.STRING, "min-priority", "Die Mindestpriorität, die ein Nutzer haben soll um automatisch gewählt zu werden.",false, true)
                         )).queue();
         logger.info("Finished loading bot. End time: {}", System.currentTimeMillis());
     }

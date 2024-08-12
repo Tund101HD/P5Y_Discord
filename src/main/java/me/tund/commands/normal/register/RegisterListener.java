@@ -3,6 +3,7 @@ package me.tund.commands.normal.register;
 import com.google.protobuf.Field;
 import edu.cmu.sphinx.fst.utils.Utils;
 import me.tund.Main;
+import me.tund.database.Database;
 import me.tund.database.SquadMember;
 import me.tund.utils.Utilities;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -25,6 +26,7 @@ public class RegisterListener extends ListenerAdapter {
 
 
     private static final Logger logger = LoggerFactory.getLogger("RegisterListenerClient");
+    private Database database = new Database();
     private long channel_id;
     private long user_id;
     private SquadMember member_object = new SquadMember();
@@ -46,7 +48,7 @@ public class RegisterListener extends ListenerAdapter {
             event.getMessage().delete().queue();
             event.getJDA().removeEventListener(this);
             return;
-        }
+      }
         event.getChannel().getIterableHistory().takeAsync(10).thenAccept(messages -> {
             List<Message> botMessages = messages.stream()
                     .filter(m -> m.getAuthor().equals(Main.bot.getSelfUser()))
@@ -167,6 +169,7 @@ public class RegisterListener extends ListenerAdapter {
             case "button_ui_stopregister":
                 event.reply("Die Registration wurde auf deine Nachfrage geschlossen.").setEphemeral(true).queue();
                 event.getMessage().delete().queue();
+                event.getJDA().removeEventListener(this);
                 break;
             case "button_ui_confirmname":
                 event.deferReply().setEphemeral(true).queue();
@@ -327,33 +330,35 @@ public class RegisterListener extends ListenerAdapter {
                             }
                         }
                     }
-                    if (count > 1) {
+                    if (count > 1 || count < 1) {
                         unit = "both";
                     }
                     member_object.setPreferred_unit(unit);
                     logger.info("Preferred unit is: {}", unit);
                     event.getHook().sendMessage("Vielen Dank für diese Infos, so können wir leichter einen Einsatz " +
-                            "für dich finden! :smile:").setEphemeral(true).queue();
+                            "für dich finden! :smile:").setEphemeral(true).queue(message -> {
+                        EmbedBuilder builder2 = new EmbedBuilder();
+                        builder2.setTitle("Kill-Ratio");
+                        builder2.setDescription("Bitte gib deine jetzige K/D als Dezimalzahl an. Dabei geht es um deine K/D in" +
+                                " realistischen Schlachten. Solltest du ThunderSkill als Quelle verwenden" +
+                                ", ist der Prozess recht einfach, auf dem Warthunder Client musst du auf dein Profil gehen, " +
+                                "realistische Schlachten auswählen " +
+                                "und dann deine Luftkills + Bodenkills durch die Anzahl der gesamten Tode rechnen. Um die " +
+                                "Anzahl der Tode zu sehen musst du über" +
+                                " die Reihe mit den Kills hovern. ");
+                        builder2.setFooter("Frage 5/6");
+                        try {
+                            event.getChannel().sendMessage("").setEmbeds(builder2.build()).
+                                    addFiles(FileUpload.fromData(new File("src/main/resources/images/HomeScreen.png")),
+                                            FileUpload.fromData(new File("src/main/resources/images/Stats.png"))).queue();
+                        } catch (Exception e) {
+                            logger.warn("Couldn't find picture-files to attach to the message.");
+                            event.getChannel().sendMessage("").setEmbeds(builder2.build()).queue();
+                        }
+                    });
                     event.getMessage().delete().queue();
                 });
-                builder = new EmbedBuilder();
-                builder.setTitle("Kill-Ratio");
-                builder.setDescription("Bitte gib deine jetzige K/D als Dezimalzahl an. Dabei geht es um deine K/D in" +
-                        " realistischen Schlachten. Solltest du ThunderSkill als Quelle verwenden" +
-                        ", ist der Prozess recht einfach, auf dem Warthunder Client musst du auf dein Profil gehen, " +
-                        "realistische Schlachten auswählen " +
-                        "und dann deine Luftkills + Bodenkills durch die Anzahl der gesamten Tode rechnen. Um die " +
-                        "Anzahl der Tode zu sehen musst du über" +
-                        " die Reihe mit den Kills hovern. ");
-                builder.setFooter("Frage 5/6");
-                try {
-                    event.getChannel().sendMessage("").setEmbeds(builder.build()).
-                            addFiles(FileUpload.fromData(new File("src/main/resources/images/HomeScreen.png")),
-                                    FileUpload.fromData(new File("src/main/resources/images/Stats.png"))).queue();
-                } catch (Exception e) {
-                    logger.warn("Couldn't find picture-files to attach to the message.");
-                    event.getChannel().sendMessage("").setEmbeds(builder.build()).queue();
-                }
+
                 break;
             case "button_ui_confirmkd":
                 event.deferReply().setEphemeral(true).queue();
@@ -428,6 +433,8 @@ public class RegisterListener extends ListenerAdapter {
                 builder.setFooter("UID: "+member_object.getDiscord_id());
                 event.getChannel().sendMessage("").setEmbeds(builder.build()).queue();
                 event.getJDA().removeEventListener(this);
+                database.addUserEntry(String.valueOf(member_object.getDiscord_id()), member_object.getIn_game_name(), member_object.getBrs(), member_object.getPreferred_unit()
+                        , (int) Math.round(member_object.getPreferred_br()), "0", member_object.getKd(), member_object.isReplace(), 0);
                 break;
             case "button_ui_noreplace":
                 event.deferReply().setEphemeral(true).queue();
@@ -477,6 +484,8 @@ public class RegisterListener extends ListenerAdapter {
                 builder.setFooter("UID: "+member_object.getDiscord_id());
                 event.getChannel().sendMessage("").setEmbeds(builder.build()).queue();
                 event.getJDA().removeEventListener(this);
+                database.addUserEntry(String.valueOf(member_object.getDiscord_id()), member_object.getIn_game_name(), member_object.getBrs(), member_object.getPreferred_unit()
+                , (int) Math.round(member_object.getPreferred_br()), "0", member_object.getKd(), member_object.isReplace(), 0);
                 break;
             default:
                 break;

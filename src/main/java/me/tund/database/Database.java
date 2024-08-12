@@ -4,6 +4,7 @@ import io.github.cdimascio.dotenv.Dotenv;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import me.tund.utils.Utilities;
+import org.mariadb.jdbc.export.Prepare;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
@@ -42,7 +43,7 @@ public class Database {
             statement.setString(1, uuid);
             statement.setString(2, username);
             int d = 3;
-            for (int i = 10; i >= 0; i-- ){
+            for (int i = 0; i <= 9; i++ ){
                 statement.setBoolean(d, brs[i]);
                 d++;
             }
@@ -53,9 +54,10 @@ public class Database {
             statement.setBoolean(17, replace);
             statement.setInt(18, priority);
             int rowsInserted = statement.executeUpdate();
-            return rowsInserted > 0;
+            return rowsInserted > 0 && createUserTable(uuid.toString());
         }catch(Exception e){
-            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getStackTrace());
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            e.printStackTrace();
             return false;
         }
     }
@@ -73,6 +75,50 @@ public class Database {
             return false;
         }
     }
+
+    public boolean changeUserName(String uuid, String username){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("UPDATE user_track SET in_game_name = ? WHERE discord_id = ?")) {
+            statement.setString(1, username);
+            statement.setString(2, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
+    public boolean changePreferredRole(String uuid, String role){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("UPDATE user_track SET prefered_unit = ? WHERE discord_id = ?")) {
+            statement.setString(1, role);
+            statement.setString(2, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean changePreferredBR(String uuid, int br){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("UPDATE user_track SET preferred_br = ? WHERE discord_id = ?")) {
+            statement.setInt(1, br);
+            statement.setString(2, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
+
+
+
+
+
+
 
 
     public boolean addSessionEntry(String startime, String endtime, Long[] ids, HashMap<Long, Integer> playtime, HashMap<Long, Integer> waittime, int total_rounds, double winration, double br){
@@ -123,11 +169,11 @@ public class Database {
                 int user_no = rs.getInt("user_no");
                 long discord_id = Long.parseLong(rs.getString("discord_id"));
                 String in_game_name = rs.getString("in_game_name");
-                boolean[] brs = {};
-                for(int i = 0; i<10; i++){
+                boolean[] brs = new boolean[10];
+                for(int i = 0; i<9; i++){
                     brs[i] = rs.getBoolean(String.valueOf(i+4)+".0");
                 }
-                String preferred_unit = rs.getString("preferred_unit");
+                String preferred_unit = rs.getString("prefered_unit");
                 double preferred_br = rs.getDouble("preferred_br");
                 int activity = rs.getInt("activity");
                 double kd = rs.getDouble("kd");
@@ -145,4 +191,46 @@ public class Database {
         return null;
     }
 
+
+
+    public boolean createUserTable(String userid){
+        con = Utilities.checkValidConnection(this.con);
+        try (PreparedStatement statement = con.prepareStatement("" +
+                "create table user_"+userid+"\n"+
+                "(\n" +
+                "    sess_no      int auto_increment,\n" +
+                "    sess_id      TEXT not null,\n" +
+                "    starttime    DATETIME default CURRENT_DATE() not null,\n" +
+                "    endtime      DATETIME default CURRENT_DATE() not null,\n" +
+                "    leader       long     default 0              not null,\n" +
+                "    participants TEXT                            null,\n" +
+                "    time_waited  int      default 0              not null,\n" +
+                "    time_played  int      default 0              not null,\n" +
+                "    constraint sess_key\n" +
+                "        primary key (sess_no)\n" +
+                ");")){
+            int inserted = statement.executeUpdate();
+            if(inserted > 0) return true;
+            return false;
+        } catch (SQLException e) {
+            logger.warn("Couldn't create table UserEntry. \n Stacktrace: {}", e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    /*
+create table useridname
+(
+    sess_no      int auto_increment,
+    sess_id      TEXT not null,
+    starttime    DATETIME default CURRENT_DATE() not null,
+    endtime      DATETIME default CURRENT_DATE() not null,
+    leader       long     default 0              not null,
+    participants TEXT                            null,
+    time_waited  int      default 0              not null,
+    time_played  int      default 0              not null,
+    constraint sess_key
+        primary key (sess_no)
+);
+*/
 }

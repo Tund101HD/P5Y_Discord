@@ -35,22 +35,22 @@ public class startsession extends ListenerAdapter {
         if (event.getName().equalsIgnoreCase("startsession")) {
 
             event.deferReply().setEphemeral(true).queue();
-            if (!event.getMember().getRoles().contains(Main.bot.getRoleById(Main.GUILD_ID))) { //FIXME Replace with role id
+            if (!event.getMember().getRoles().contains(Main.bot.getRoleById(1270850472936341534L))) { //FIXME Replace with role id
                 event.getHook().editOriginal("Sorry, aber du bist kein Squad-Leader.").queue();
                 return;
             }
             logger.info("Trying to start Session for Squad-Leader {}", event.getMember().getEffectiveName());
-            String minact = (event.getOption("min-activity").getAsString() == null || event.getOption("min-activity").getAsString().isEmpty())
+            String minact = (!event.getOptions().contains("min-activity"))
                     ? "0" : event.getOption("min-activity").getAsString(); // min activity
             double br;
             try {
-                br = (event.getOption("br").getAsString() == null || event.getOption("br").getAsString().isEmpty())
-                        ? 13.0d : event.getOption("br").getAsDouble(); //br
+                br = (event.getOption("br").getAsString() == null || !event.getOptions().contains("br"))
+                        ? 13.0d : Double.parseDouble(event.getOption("br").getAsString()); //br
             } catch (Exception e) {
                 br = 13.0d;
             }
-            String exlude_id = event.getOption("exlude_id").getAsString() == null ? "" : event.getOption("exlude_id").getAsString(); //CSV von IDs
-            String min_priority = (event.getOption("min-priority").getAsString() == null || event.getOption("min-priority").getAsString().isEmpty())
+            String exlude_id = (!event.getOptions().contains("exclude_id")) ? "" : event.getOption("exlude_id").getAsString(); //CSV von IDs
+            String min_priority = (!event.getOptions().contains("min-priority"))
                     ? "0" : event.getOption("min-priority").getAsString(); //minprio
 
             Session session = new Session(new Date(new DateTime(System.currentTimeMillis(),
@@ -81,9 +81,12 @@ public class startsession extends ListenerAdapter {
             }
             sqs.addAll(Main.sessionHandler.waiting);
             for (SquadMember sq : sqs) {
-                session.addParticipant(sq.getDiscord_id()); // TODO Loop through all participants that are not active and check for wait in channel in updateSession() !
+                session.addParticipant(sq.getDiscord_id());
+                logger.info("Adding Squad-Member to Session with the id {}", sq.getDiscord_id());
+                // TODO Loop through all participants that are not active and check for wait in channel in updateSession() !
                 if (!(sq.getActivity() >= session.getMin_acitivty()) || !(sq.getPriority() >= session.getMin_priority())
-                        || !session.getExclude_ids().contains(sq.getDiscord_id()) && Arrays.asList(sq.getBrs()).contains(session.getBattle_rating())) {
+                        ) {  // FIXME Convert boolean to double for BR check  && Arrays.asList(sq.getBrs()).contains(session.getBattle_rating()) || !session.getExclude_ids().contains(sq.getDiscord_id())
+                    logger.info("Removing Squad-Member from Session with the id {}. Activity is: {}, Priority is {} ", sq.getDiscord_id(), sq.getActivity(), sq.getPriority());
                     sqs.remove(sq);
                 }
             }
@@ -120,18 +123,18 @@ public class startsession extends ListenerAdapter {
                     if (entry.getKey().getPreferred_unit().equalsIgnoreCase("ground")) {
                         if (isSquadOne(session.getLeader_id())) {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(entry.getKey().getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND)).queue();
                         } else {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(entry.getKey().getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD2_GROUND));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD2_GROUND)).queue();
                         }
                     } else {
                         if (isSquadOne(session.getLeader_id())) {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(entry.getKey().getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD1_AIR));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD1_AIR)).queue();
                         } else {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(entry.getKey().getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD2_AIR));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD2_AIR)).queue();
                         }
                     }
                     Main.bot.getUserById(entry.getKey().getDiscord_id()).openPrivateChannel().
@@ -144,12 +147,15 @@ public class startsession extends ListenerAdapter {
                 session.setActive(true);
 
             } else if (sqs.isEmpty()) {
+                logger.info("List of Squad-Members is empty. Not moving anyone.");
+
                 Main.bot.getUserById(session.getLeader_id()).openPrivateChannel().flatMap(
                         channel -> channel.sendMessage("Der Wartebereich hat keine Nutzer, die für den Squad ready sind. " +
                                 "Warte bis Spieler manuell joinen oder nutze ``/fillsession`` mit angepassten Werten. Um die Session wieder zu schließen nutze " +
                                 "``/endsession``. Bitte beachte das Nachrichten und Tags nicht wieder zurückgezogen werden können!")).queue();
                 session.setActive(false);
             } else {
+                logger.info("Moving members into active Session!");
                 for (SquadMember sq : sqs) {
                     session.addParticipant(sq.getDiscord_id());
                     session.addActive_participant(sq.getDiscord_id());
@@ -158,22 +164,26 @@ public class startsession extends ListenerAdapter {
                     if (sq.getPreferred_unit().equalsIgnoreCase("ground")) {
                         if (isSquadOne(session.getLeader_id())) {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(sq.getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND)).queue();
                         } else {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(sq.getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD2_GROUND));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD2_GROUND)).queue();
                         }
                     } else {
                         if (isSquadOne(session.getLeader_id())) {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(sq.getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD1_AIR));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD1_AIR)).queue();
                         } else {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(sq.getDiscord_id()),
-                                    Main.bot.getVoiceChannelById(Main.SQUAD2_AIR));
+                                    Main.bot.getVoiceChannelById(Main.SQUAD2_AIR)).queue();
                         }
                     }
 
                 }
+                Main.bot.getUserById(session.getLeader_id()).openPrivateChannel().flatMap(
+                        channel -> channel.sendMessage("Der Wartebereich hat Nutzer, die für den Squad ready sind. " +
+                                "Warte bis Spieler manuell joinen oder nutze ``/fillsession`` mit angepassten Werten. Um die Session wieder zu schließen nutze " +
+                                "``/endsession``. Bitte beachte das Nachrichten und Tags nicht wieder zurückgezogen werden können!")).queue();
             }
         }
     }
