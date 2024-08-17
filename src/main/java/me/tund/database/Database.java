@@ -61,6 +61,39 @@ public class Database {
             return false;
         }
     }
+
+    public boolean updateUserEntry(String uuid, String username, boolean[] brs, String preferred_unit, int preferred_br, String activity, double kd, boolean replace, int priority){
+        con = Utilities.checkValidConnection(this.con);
+        try (PreparedStatement statement = con.prepareStatement("""
+        UPDATE user_track SET discord_id =?, in_game_name =?, `13.0` =?, `12.0` =?, 
+                       `11.0` =?, `10.0` =?, `9.0` =?, `8.0` =?, `7.0` =?, `6.0` =?, `5.0` =?, 
+                       `4.0` =?, prefered_unit =?, preferred_br =?, activity =?, kd =?,
+                       `replace` =?, priority =?
+        WHERE `discord_id` = ?
+        """)) {
+            statement.setString(1, uuid);
+            statement.setString(2, username);
+            int d = 3;
+            for (int i = 0; i <= 9; i++ ){
+                statement.setBoolean(d, brs[i]);
+                d++;
+            }
+            statement.setString(13, preferred_unit);
+            statement.setInt(14, preferred_br);
+            statement.setString(15, activity);
+            statement.setDouble(16, kd);
+            statement.setBoolean(17, replace);
+            statement.setInt(18, priority);
+            statement.setString(19, uuid);
+            int rowsInserted = statement.executeUpdate();
+            return rowsInserted > 0 && createUserTable(uuid.toString());
+        }catch(Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean isUserEntry(String uuid){
         con = Utilities.checkValidConnection(this.con);
         try (PreparedStatement statement = con.prepareStatement("""
@@ -114,7 +147,70 @@ public class Database {
         }
     }
 
+    public boolean changeKillRation(String uuid, double kd){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("UPDATE user_track SET kd = ? WHERE discord_id = ?")) {
+            statement.setDouble(1, kd);
+            statement.setString(2, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
 
+    public boolean changeActivity(String uuid, int activity){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("UPDATE user_track SET activity = ? WHERE discord_id = ?")) {
+            statement.setString(1, String.valueOf(activity));
+            statement.setString(2, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
+    public boolean changeReplace(String uuid, boolean replace){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("UPDATE user_track SET `replace` = ? WHERE discord_id = ?")) {
+            statement.setBoolean(1, replace);
+            statement.setString(2, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
+
+    public boolean changeBrs(String uuid, boolean[] brs ){
+        con = Utilities.checkValidConnection(this.con);
+        try(PreparedStatement statement = con.prepareStatement("" +
+                "UPDATE user_track SET " +
+                "`13.0` =?,  " +
+                "`12.0` =?," +
+                "`11.0` =?," +
+                "`10.0` =?," +
+                "`9.0` =?," +
+                "`8.0` =?," +
+                "`7.0` =?," +
+                "`6.0` =?," +
+                "`5.0` =?," +
+                "`4.0` =? " +
+                "WHERE discord_id = ?")) {
+            for(int i = 0; i < brs.length; i++){
+                statement.setBoolean(i+1, brs[i]);
+            }
+            statement.setString(brs.length+1, uuid);
+            int rowsUpdated = statement.executeUpdate();
+            return rowsUpdated > 0;
+        }catch (Exception e){
+            logger.error("Something went wrong trying to add a UserEntry. \n Stacktrace: {}", e.getMessage());
+            return false;
+        }
+    }
 
 
 

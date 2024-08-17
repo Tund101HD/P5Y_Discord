@@ -484,8 +484,14 @@ public class RegisterListener extends ListenerAdapter {
                 builder.setFooter("UID: "+member_object.getDiscord_id());
                 event.getChannel().sendMessage("").setEmbeds(builder.build()).queue();
                 event.getJDA().removeEventListener(this);
+                if(database.isUserEntry(event.getUser().getId())){
+                        database.updateUserEntry(String.valueOf(member_object.getDiscord_id()), member_object.getIn_game_name(), member_object.getBrs(), member_object.getPreferred_unit()
+                                , (int) Math.round(member_object.getPreferred_br()), "0", member_object.getKd(), member_object.isReplace(), 0);
+                    break;
+                }
                 database.addUserEntry(String.valueOf(member_object.getDiscord_id()), member_object.getIn_game_name(), member_object.getBrs(), member_object.getPreferred_unit()
                 , (int) Math.round(member_object.getPreferred_br()), "0", member_object.getKd(), member_object.isReplace(), 0);
+                event.getGuild().addRoleToMember(event.getMember(), event.getGuild().getRoleById(Main.CW_ROLE)).queue();
                 break;
             default:
                 break;

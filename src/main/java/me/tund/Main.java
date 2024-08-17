@@ -31,6 +31,9 @@ public class Main {
     public final static long SQUAD2_GROUND = 1270850017548308611L;
     public final static long SQUAD1_AIR = 1270849826174795887L;
     public final static long SQUAD2_AIR = 1270849940792541246L;
+    public final static long CW_ROLE = 1274145118999416944L;
+    public final static long SL_ROLE = 1270850472936341534L;
+
 
 
     public static void main(String[] args) throws InterruptedException {

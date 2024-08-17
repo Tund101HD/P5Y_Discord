@@ -72,7 +72,7 @@ public class SessionHandler {
 
     private void startExecutorService(){
         executorService = Executors.newScheduledThreadPool(5);
-        waitingSession = executorService.scheduleAtFixedRate(new SessionWaitingRefreshTask(),0,500, TimeUnit.MILLISECONDS);
+        waitingSession = executorService.scheduleAtFixedRate(new SessionWaitingRefreshTask(),0,1000, TimeUnit.MILLISECONDS);
         for (Session session : sessions) {
             SessionRefreshTask s = new SessionRefreshTask(session, this);
             sessionMap.put(session, executorService.scheduleAtFixedRate(s ,0,1000, TimeUnit.MILLISECONDS));
@@ -89,6 +89,10 @@ public class SessionHandler {
     }
     public void addSession(Session session) {
         sessions.add(session);
+        if(executorService == null) executorService = Executors.newScheduledThreadPool(5);
+        logger.debug("Starting Session ({}) on a new thread. Current number of active Sessions minus WaitingRefresh is: {}", session.getSession_id(), sessions.size());
+        sessionMap.put(session, executorService.scheduleAtFixedRate(new SessionRefreshTask(session, this),0,1000, TimeUnit.MILLISECONDS));
+
     }
     public void removeSession(Session session) {
         sessions.remove(session);

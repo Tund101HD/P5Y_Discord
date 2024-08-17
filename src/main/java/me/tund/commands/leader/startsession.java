@@ -5,8 +5,6 @@ import com.google.common.primitives.Longs;
 import me.tund.Main;
 import me.tund.database.Database;
 import me.tund.database.SquadMember;
-import me.tund.utils.sessions.SessionHandler;
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -18,8 +16,6 @@ import me.tund.utils.sessions.Session;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,7 +31,7 @@ public class startsession extends ListenerAdapter {
         if (event.getName().equalsIgnoreCase("startsession")) {
 
             event.deferReply().setEphemeral(true).queue();
-            if (!event.getMember().getRoles().contains(Main.bot.getRoleById(1270850472936341534L))) { //FIXME Replace with role id
+            if (!event.getMember().getRoles().contains(Main.bot.getRoleById(Main.SL_ROLE))) {
                 event.getHook().editOriginal("Sorry, aber du bist kein Squad-Leader.").queue();
                 return;
             }
@@ -72,7 +68,7 @@ public class startsession extends ListenerAdapter {
             event.getHook().editOriginal("Session wurde gestartet.").queue();
             logger.info("Session has been added to the handler. Now searching for participants by checking channels. ID={}", session.getSession_id());
 
-            //Search in the waiting channel for suitable people. TODO Add people from SessionHadler.waiting
+            //Search in the waiting channel for suitable people. TODO Add people from SessionHadler.waiting // FIXME Is nuking the DB worth it -- just check for role?
             List<SquadMember> sqs = new ArrayList<>();
             for (Member m : Main.bot.getVoiceChannelById(Main.WARTERAUM_ID).getMembers()) {
                 SquadMember sq = db.getSquadMemberById(m.getIdLong());
@@ -145,6 +141,8 @@ public class startsession extends ListenerAdapter {
 
                 }
                 session.setActive(true);
+                if(isSquadOne(session.getLeader_id())) session.setSqaudOne(true);
+                else session.setSqaudOne(false);
 
             } else if (sqs.isEmpty()) {
                 logger.info("List of Squad-Members is empty. Not moving anyone.");
@@ -178,7 +176,11 @@ public class startsession extends ListenerAdapter {
                                     Main.bot.getVoiceChannelById(Main.SQUAD2_AIR)).queue();
                         }
                     }
-
+                    Main.bot.getUserById(sq.getDiscord_id()).openPrivateChannel().
+                            flatMap(channel -> channel.sendMessage("Danke für's warten. Ein Squadleader hat eine Session erstellt und du wurdest automatisch" +
+                                    "aus dem Wartebereich in einen Channel gezogen der zu deiner Präferenz passt. " +
+                                    "Bitte tausche dich mit " + Main.bot.getUserById(session.getLeader_id()).getEffectiveName() + " aus, welche Rolle du einnehmen sollst.")).queue();
+                    session.addActive_participant(sq.getDiscord_id());
                 }
                 Main.bot.getUserById(session.getLeader_id()).openPrivateChannel().flatMap(
                         channel -> channel.sendMessage("Der Wartebereich hat Nutzer, die für den Squad ready sind. " +

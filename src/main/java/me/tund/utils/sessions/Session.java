@@ -8,8 +8,10 @@ public class Session {
     private final Date start_time;// UUID for given Session
     private final double battle_rating;
     private long leader_id;
+    private boolean isSqaudOne = true;
 
     protected boolean STATUS = false;// Is the Session active or currently waiting?
+    protected long LAST_ACTIVE = 0;
     protected boolean isClosing = false; // Is the session marked for close?
     private Date end_time;
     private List<Long> participants = new ArrayList<>();
@@ -207,5 +209,21 @@ public class Session {
 
     public boolean isClosing() {
         return isClosing;
+    }
+
+    public long getLAST_ACTIVE() {
+        return LAST_ACTIVE;
+    }
+
+    public void setLAST_ACTIVE(long LAST_ACTIVE) {
+        this.LAST_ACTIVE = LAST_ACTIVE;
+    }
+
+    public boolean isSqaudOne() {
+        return isSqaudOne;
+    }
+
+    public void setSqaudOne(boolean sqaudOne) {
+        isSqaudOne = sqaudOne;
     }
 }
