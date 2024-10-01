@@ -116,6 +116,7 @@ public class Session {
     }
     public List<Long> addActive_participant(Long participant) {
         active_participants.add(participant);
+
         return active_participants;
     }
     public List<Long> removeActive_participant(Long participant) {

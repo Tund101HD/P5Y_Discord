@@ -1,6 +1,7 @@
 package me.tund.utils;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import me.tund.Main;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
@@ -64,6 +65,10 @@ public class Utilities {
                         ? (tmpSub >= 0.5f ? tmp + 1 : tmp)
                         : (tmpSub >= -0.5f ? tmp : tmp - 1)
         ) ) ) / pow;
+    }
+    public static boolean isSquadOne(long leader_id) {
+        return Main.bot.getVoiceChannelById(Main.SQUAD1_AIR).getMembers().contains(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(leader_id)) ||
+                Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND).getMembers().contains(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(leader_id));
     }
 
 }

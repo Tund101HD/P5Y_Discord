@@ -82,7 +82,7 @@ public class startsession extends ListenerAdapter {
                 // TODO Loop through all participants that are not active and check for wait in channel in updateSession() !
                 if (!(sq.getActivity() >= session.getMin_acitivty()) || !(sq.getPriority() >= session.getMin_priority())
                         ) {  // FIXME Convert boolean to double for BR check  && Arrays.asList(sq.getBrs()).contains(session.getBattle_rating()) || !session.getExclude_ids().contains(sq.getDiscord_id())
-                    logger.info("Removing Squad-Member from Session with the id {}. Activity is: {}, Priority is {} ", sq.getDiscord_id(), sq.getActivity(), sq.getPriority());
+                    logger.info("Removing Squad-Member from Session-List with the id {}. Activity is: {}, Priority is {} ", sq.getDiscord_id(), sq.getActivity(), sq.getPriority());
                     sqs.remove(sq);
                 }
             }
@@ -178,14 +178,17 @@ public class startsession extends ListenerAdapter {
                     }
                     Main.bot.getUserById(sq.getDiscord_id()).openPrivateChannel().
                             flatMap(channel -> channel.sendMessage("Danke für's warten. Ein Squadleader hat eine Session erstellt und du wurdest automatisch" +
-                                    "aus dem Wartebereich in einen Channel gezogen der zu deiner Präferenz passt. " +
+                                    "aus dem Wartebereich in einen Channel gezogen, der zu deiner Präferenz passt. " +
                                     "Bitte tausche dich mit " + Main.bot.getUserById(session.getLeader_id()).getEffectiveName() + " aus, welche Rolle du einnehmen sollst.")).queue();
                     session.addActive_participant(sq.getDiscord_id());
                 }
-                Main.bot.getUserById(session.getLeader_id()).openPrivateChannel().flatMap(
-                        channel -> channel.sendMessage("Der Wartebereich hat Nutzer, die für den Squad ready sind. " +
-                                "Warte bis Spieler manuell joinen oder nutze ``/fillsession`` mit angepassten Werten. Um die Session wieder zu schließen nutze " +
-                                "``/endsession``. Bitte beachte das Nachrichten und Tags nicht wieder zurückgezogen werden können!")).queue();
+
+                if(session.getActive_participants().size() < 8){
+                    Main.bot.getUserById(session.getLeader_id()).openPrivateChannel().flatMap(
+                            channel -> channel.sendMessage("Der Wartebereich hat Nutzer, die für den Squad ready sind. " +
+                                    "Warte bis Spieler manuell joinen oder nutze ``/fillsession`` mit angepassten Werten. Um die Session wieder zu schließen nutze " +
+                                    "``/endsession``. Bitte beachte das Nachrichten und Tags nicht wieder zurückgezogen werden können!")).queue();
+                }
             }
         }
     }
@@ -212,7 +215,7 @@ public class startsession extends ListenerAdapter {
                     event.replyChoices(options).queue();
                     break;
                 case "exclude_id":
-                    words = new String[]{"1146100281273233441"}; //FIXME Liste and gebannten Nutzern aus der Vergangenheit
+                    words = new String[]{"1146100281273233441"}; //FIXME Liste an gebannten Nutzern aus der Vergangenheit
                     options = Stream.of(words)
                             .filter(word -> word.startsWith(event.getFocusedOption().getValue()))
                             .map(word -> new Command.Choice(word, word))

@@ -87,8 +87,10 @@ public class SessionRefreshTask implements Runnable {
                         Member suitable_m = Main.bot.getGuildById(Main.GUILD_ID).getMemberById(m.getDiscord_id());
                         Member leader = Main.bot.getGuildById(Main.GUILD_ID).getMemberById(session.getLeader_id());
 
-                        if(suitable_m.getVoiceState().isDeafened()){ //TODO ADD AFK-Channel !!
+                        if(suitable_m.getVoiceState().isDeafened() || Main.bot.getVoiceChannelById(Main.AFK_CHANNEL_ID).getMembers().contains(suitable_m)){ //TODO ADD AFK-Channel !!
                             handler.waiting.remove(m);
+                            suitable_m.getUser().openPrivateChannel().queue(pc -> {pc.sendMessage("Du wurdest aus der Warteliste entfernt, da du entweder auf gehörlos bist oder dich im AFK-Bereich befindest!").queue();});
+
                             continue;
                         }
 
@@ -116,6 +118,7 @@ public class SessionRefreshTask implements Runnable {
                             }
                         }
                         suitable.remove(m);
+                        handler.waiting.remove(m);
                     }
                     if(session.getActive_participants().size() >= 8){
                         session.setActive(true);
@@ -123,6 +126,7 @@ public class SessionRefreshTask implements Runnable {
                 }
             }
         }else{
+
             List<Long> l = session.getActive_participants();
             if(session.isSqaudOne()){
                 for(long l1 : l){
@@ -146,6 +150,7 @@ public class SessionRefreshTask implements Runnable {
 
 
             if(session.getActive_participants().size() <= 8){
+                logger.debug("Session is now longer active. Waiting for participants! ID: {} ; Timestamp: {}", session.getSession_id(), System.currentTimeMillis());
                 session.setActive(false);
                 session.setLAST_ACTIVE(System.currentTimeMillis());
             }

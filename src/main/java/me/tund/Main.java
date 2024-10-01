@@ -2,6 +2,7 @@ package me.tund;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import me.tund.commands.leader.fillsession;
 import me.tund.commands.leader.startsession;
 import io.github.cdimascio.dotenv.Dotenv;
 import me.tund.commands.normal.register.register;
@@ -33,6 +34,7 @@ public class Main {
     public final static long SQUAD2_AIR = 1270849940792541246L;
     public final static long CW_ROLE = 1274145118999416944L;
     public final static long SL_ROLE = 1270850472936341534L;
+    public final static long AFK_CHANNEL_ID = 1290761286459592746L;
 
 
 
@@ -50,6 +52,7 @@ public class Main {
         CommandClient client = builder.build();
         bot.addEventListener(client);
         bot.addEventListener(new startsession());
+        bot.addEventListener(new fillsession(sessionHandler));
         bot.addEventListener(new register());
         sessionHandler = new SessionHandler();
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
@@ -60,7 +63,15 @@ public class Main {
                                 new OptionData(OptionType.STRING, "br", "Auf welchen BR die Session gespielt wird. Es werden nur Nutzer berücksichtigt die das BR haben!",false, true),
                                 new OptionData(OptionType.STRING, "exclude_id", "Eine Liste and (Discord-)IDs die nicht Berücksichtigt werden soll, getrennt durch Kommas.",false, true),
                                 new OptionData(OptionType.STRING, "min-priority", "Die Mindestpriorität, die ein Nutzer haben soll um automatisch gewählt zu werden.",false, true)
+                        ),
+                Commands.slash("fillsession", "Fülle deine Session mit neuen Leuten auf. Gib bei Bedarf neue Anforderungen an.")
+                        .addOptions(
+                                new OptionData(OptionType.STRING, "min-activity", "Die Mindestaktivität die ein Nutzer benötigt um automatisch gewählt zu werden.",false, true),
+                                new OptionData(OptionType.STRING, "br", "Auf welchen BR die Session gespielt wird. Es werden nur Nutzer berücksichtigt die das BR haben!",false, true),
+                                new OptionData(OptionType.STRING, "exclude_id", "Eine Liste and (Discord-)IDs die nicht Berücksichtigt werden soll, getrennt durch Kommas.",false, true),
+                                new OptionData(OptionType.STRING, "min-priority", "Die Mindestpriorität, die ein Nutzer haben soll um automatisch gewählt zu werden.",false, true)
                         )).queue();
+
         logger.info("Finished loading bot. End time: {}", System.currentTimeMillis());
     }
 }
