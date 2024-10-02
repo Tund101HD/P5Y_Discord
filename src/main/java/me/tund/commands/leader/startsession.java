@@ -5,6 +5,7 @@ import com.google.common.primitives.Longs;
 import me.tund.Main;
 import me.tund.database.Database;
 import me.tund.database.SquadMember;
+import me.tund.utils.sessions.SessionHandler;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -21,10 +22,11 @@ import java.util.stream.Stream;
 
 public class startsession extends ListenerAdapter {
     private Database db = new Database();
+    private final SessionHandler handler;
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger("StartSessionCommand");
-    public startsession() {
-
-    }
+        public startsession(SessionHandler handler) {
+            this.handler = handler;
+        }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -34,6 +36,12 @@ public class startsession extends ListenerAdapter {
             if (!event.getMember().getRoles().contains(Main.bot.getRoleById(Main.SL_ROLE))) {
                 event.getHook().editOriginal("Sorry, aber du bist kein Squad-Leader.").queue();
                 return;
+            }
+            for(Session s : handler.getSessions()){
+                if(s.getActive_participants().contains(event.getUser().getIdLong()) || s.getParticipants().contains(event.getUser().getIdLong()) || handler.waiting.contains(db.getSquadMemberById(event.getMember().getIdLong()))){
+                    event.getHook().editOriginal("Sorry, aber du bist bereits Teil einer Session. Bitte verlasse diese zuerst in dem du aus dem Sprachkanal gehst!").queue();
+                    return;
+                }
             }
             logger.info("Trying to start Session for Squad-Leader {}", event.getMember().getEffectiveName());
             String minact = (!event.getOptions().contains("min-activity"))

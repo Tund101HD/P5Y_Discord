@@ -106,7 +106,7 @@ public class SessionHandler {
         saveSessionToJson(convertSessionToJson(session));
     }
 
-    public void saveAndCloseSession(Session session) {
+    public boolean saveAndCloseSession(Session session) {
         DateTime time = new DateTime(System.currentTimeMillis(), DateTimeZone.forTimeZone(TimeZone.getTimeZone("UTC+02:00")));
         session.setEnd_time(new Date(time.getMillis()));
         removeSessionFromJson(convertSessionToJson(session)); //remove session with ID
@@ -119,5 +119,6 @@ public class SessionHandler {
             logger.info("Session {} has been saved and closed. Closing time: {}", session.getSession_id(), time);
         else
             logger.warn("Session {}: Failed to save Session to Database! Timestamp:{}", session.getSession_id(), time);
+        return success;
     }
 }

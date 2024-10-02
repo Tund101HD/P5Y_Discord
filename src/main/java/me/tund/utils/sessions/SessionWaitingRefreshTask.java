@@ -18,7 +18,7 @@ public class SessionWaitingRefreshTask implements Runnable{
           boolean still_waiting =  g.getMemberById(member.getDiscord_id()).getVoiceState().inAudioChannel() &&
                   !g.getMemberById(member.getDiscord_id()).getVoiceState().isDeafened() &&
                   !g.getMemberById(member.getDiscord_id()).getVoiceState().isMuted() &&
-                  !(g.getMemberById(member.getDiscord_id()).getVoiceState().getChannel().getIdLong() == 894705519720292352L);
+                  !(g.getMemberById(member.getDiscord_id()).getVoiceState().getChannel().getIdLong() == Main.AFK_CHANNEL_ID);
           if(!still_waiting){
               Main.sessionHandler.waiting.remove(member);
               Main.sessionHandler.waiting_sessions.remove(member);

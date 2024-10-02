@@ -2,9 +2,11 @@ package me.tund;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import me.tund.commands.leader.endsession;
 import me.tund.commands.leader.fillsession;
 import me.tund.commands.leader.startsession;
 import io.github.cdimascio.dotenv.Dotenv;
+import me.tund.commands.normal.joinsession;
 import me.tund.commands.normal.register.register;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -50,11 +52,13 @@ public class Main {
         builder.setPrefix("cw/");
         builder.setOwnerId("1158495140969713815");
         CommandClient client = builder.build();
+        sessionHandler = new SessionHandler();
         bot.addEventListener(client);
-        bot.addEventListener(new startsession());
+        bot.addEventListener(new startsession(sessionHandler));
         bot.addEventListener(new fillsession(sessionHandler));
         bot.addEventListener(new register());
-        sessionHandler = new SessionHandler();
+        bot.addEventListener(new joinsession(sessionHandler));
+        bot.addEventListener(new endsession(sessionHandler));
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
                 Commands.slash("register", "Registriere dich um bei CW mitzumachen.").addOptions(new OptionData(OptionType.STRING, "stat", "Welchen Wert du aktualisieren möchtest oder ob du von Vorne Anfangen möchtest.", false, true)),
                 Commands.slash("startsession", "Starte eine CW-Session für Squad1/2. Du musst dich dafür in einem Channel befinden.")
@@ -70,7 +74,9 @@ public class Main {
                                 new OptionData(OptionType.STRING, "br", "Auf welchen BR die Session gespielt wird. Es werden nur Nutzer berücksichtigt die das BR haben!",false, true),
                                 new OptionData(OptionType.STRING, "exclude_id", "Eine Liste and (Discord-)IDs die nicht Berücksichtigt werden soll, getrennt durch Kommas.",false, true),
                                 new OptionData(OptionType.STRING, "min-priority", "Die Mindestpriorität, die ein Nutzer haben soll um automatisch gewählt zu werden.",false, true)
-                        )).queue();
+                        ),
+                Commands.slash("endsession", "Beende deine Session"),
+                Commands.slash("joinsession", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.")).queue();
 
         logger.info("Finished loading bot. End time: {}", System.currentTimeMillis());
     }

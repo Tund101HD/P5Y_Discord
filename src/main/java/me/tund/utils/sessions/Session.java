@@ -23,6 +23,7 @@ public class Session {
     private List<Long> exclude_ids;
     private int min_acitivty;
     private int min_priority;
+    private long channel_id;
 
 
     public Session(Date start_time, double battle_rating, long leader_id) {
@@ -226,5 +227,17 @@ public class Session {
 
     public void setSqaudOne(boolean sqaudOne) {
         isSqaudOne = sqaudOne;
+    }
+
+    public void close(){
+        isClosing = true;
+    }
+
+    public long getChannel_id() {
+        return channel_id;
+    }
+
+    public void setChannel_id(long channel_id) {
+        this.channel_id = channel_id;
     }
 }
