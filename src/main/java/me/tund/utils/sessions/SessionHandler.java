@@ -79,6 +79,19 @@ public class SessionHandler {
         logger.debug("Sessions have been loaded and tasks have been scheduled. Current number of sessions: {}", sessions.size());
     }
 
+    public Session getSessionById(String sessionId) {
+        for(Session session : sessions) {
+            if(session.getSession_id().equals(sessionId)) return session;
+        }
+        return null;
+    }
+
+    public Session getSessionByLeader(long leaderId){
+        for(Session session : sessions) {
+            if(session.getLeader_id() == leaderId) return session;
+        }
+        return null;
+    }
 
     public List<Session> getSessions() {
         return sessions;
@@ -95,6 +108,12 @@ public class SessionHandler {
     }
     public void removeSession(Session session) {
         sessions.remove(session);
+    }
+    public Session getSessionByUser(long id){
+        for(Session session : sessions) {
+            if(session.getActive_participants().contains(id)) return session;
+        }
+        return null;
     }
 
     public void updateSession(Session session) {
