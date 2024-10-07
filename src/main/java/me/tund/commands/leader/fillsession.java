@@ -57,7 +57,8 @@ public class fillsession extends ListenerAdapter {
             event.getHook().editOriginal("Sorry, aber du besitzt keinen Squad mit einer Session! Bitte führe zuerst '/startsession' aus!").queue();
             return;
         }
-
+        activeSession.setLocked(true);
+        handler.updateSession(activeSession);
         //Search in the waiting channel for suitable people. TODO Add people from SessionHadler.waiting // FIXME Is nuking the DB worth it -- just check for role?
         List<SquadMember> sqs = new ArrayList<>();
         for (Member m : Main.bot.getVoiceChannelById(Main.WARTERAUM_ID).getMembers()) {
@@ -133,9 +134,10 @@ public class fillsession extends ListenerAdapter {
 
             }
             activeSession.setActive(true);
+            activeSession.setLocked(false);
             if(Utilities.isSquadOne(activeSession.getLeader_id())) activeSession.setSqaudOne(true);
             else activeSession.setSqaudOne(false);
-
+            handler.updateSession(activeSession);
         } else if (sqs.isEmpty()) {
             logger.info("List of Squad-Members is empty. Not moving anyone.");
 
@@ -144,6 +146,8 @@ public class fillsession extends ListenerAdapter {
                             "Warte bis Spieler manuell joinen oder nutze ``/fillsession`` mit angepassten Werten. Um die Session wieder zu schließen nutze " +
                             "``/endsession``. Bitte beachte das Nachrichten und Tags nicht wieder zurückgezogen werden können!")).queue();
             activeSession.setActive(false);
+            activeSession.setLocked(false);
+            handler.updateSession(activeSession);
         } else {
             logger.info("Moving members into active Session!");
             for (SquadMember sq : sqs) {
@@ -174,6 +178,8 @@ public class fillsession extends ListenerAdapter {
                                 "aus dem Wartebereich in einen Channel nachgerückt, der zu deiner Präferenz passt. " +
                                 "Bitte tausche dich mit " + Main.bot.getUserById(finalActiveSession1.getLeader_id()).getEffectiveName() + " aus, welche Rolle du einnehmen sollst.")).queue();
                 activeSession.addActive_participant(sq.getDiscord_id());
+                activeSession.setLocked(false);
+                handler.updateSession(activeSession);
             }
             if(activeSession.getActive_participants().size() < 8){
                 Main.bot.getUserById(activeSession.getLeader_id()).openPrivateChannel().flatMap(

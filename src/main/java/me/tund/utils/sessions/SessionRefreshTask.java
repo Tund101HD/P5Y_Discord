@@ -35,7 +35,10 @@ public class SessionRefreshTask implements Runnable {
             - If channel doesn't have 8 participants, check for users in the waiting channel. ( add delay 10 Seconds)
             - Only add to user_play_time when isActive() results in true
         */
-
+        if(session.isLocked()){
+            logger.debug("Session is currently locked. ID: {} ; Timestamp: {}", session.getSession_id(), System.currentTimeMillis());
+            return;
+        }
         if(!session.isActive()){
             if(session.getActive_participants().size() >= 8){
                 logger.debug("Session is now active. ID: {} ; Timestamp: {}", session.getSession_id(), System.currentTimeMillis());
@@ -122,6 +125,7 @@ public class SessionRefreshTask implements Runnable {
                     }
                     if(session.getActive_participants().size() >= 8){
                         session.setActive(true);
+
                     }
                 }
             }

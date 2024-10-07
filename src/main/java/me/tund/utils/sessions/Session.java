@@ -13,6 +13,7 @@ public class Session {
     protected boolean STATUS = false;// Is the Session active or currently waiting?
     protected long LAST_ACTIVE = 0;
     protected boolean isClosing = false; // Is the session marked for close?
+    protected boolean LOCKED = false;
     private Date end_time;
     private List<Long> participants = new ArrayList<>();
     private List<Long> active_participants = new ArrayList<>();
@@ -239,5 +240,16 @@ public class Session {
 
     public void setChannel_id(long channel_id) {
         this.channel_id = channel_id;
+    }
+
+    /**
+     * Lock the Session from autofilling.
+     * @return
+     */
+    public boolean isLocked() {
+            return LOCKED;
+    }
+    public void setLocked(boolean locked){
+        LOCKED = locked;
     }
 }

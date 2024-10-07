@@ -116,6 +116,10 @@ public class SessionHandler {
         return null;
     }
 
+    /**
+     * Updates a specific session's value in memory. Needs to be called everytime a value (Like the Active_Participants) changes.
+     * @param session The Session to be updated
+     */
     public void updateSession(Session session) {
         for(Session s : sessions){
             if(s.getSession_id().equals(session.getSession_id())){
@@ -130,6 +134,7 @@ public class SessionHandler {
         session.setEnd_time(new Date(time.getMillis()));
         removeSessionFromJson(convertSessionToJson(session)); //remove session with ID
         sessionMap.get(session).cancel(true);
+        removeSession(session);
         boolean success =db.addSessionEntry(session.getStart_time().toString(), session.getEnd_time().toString(),
                session.getParticipants().toArray(new Long[255]), session.getParticipant_time_played(),
                 session.getParticipant_time_waited(), session.getTotal_rounds(),

@@ -4,6 +4,7 @@ import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import me.tund.commands.leader.endsession;
 import me.tund.commands.leader.fillsession;
+import me.tund.commands.leader.move;
 import me.tund.commands.leader.startsession;
 import io.github.cdimascio.dotenv.Dotenv;
 import me.tund.commands.normal.joinsession;
@@ -59,6 +60,7 @@ public class Main {
         bot.addEventListener(new register());
         bot.addEventListener(new joinsession(sessionHandler));
         bot.addEventListener(new endsession(sessionHandler));
+        bot.addEventListener(new move(sessionHandler));
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
                 Commands.slash("register", "Registriere dich um bei CW mitzumachen.").addOptions(new OptionData(OptionType.STRING, "stat", "Welchen Wert du aktualisieren möchtest oder ob du von Vorne Anfangen möchtest.", false, true)),
                 Commands.slash("startsession", "Starte eine CW-Session für Squad1/2. Du musst dich dafür in einem Channel befinden.")
@@ -76,7 +78,11 @@ public class Main {
                                 new OptionData(OptionType.STRING, "min-priority", "Die Mindestpriorität, die ein Nutzer haben soll um automatisch gewählt zu werden.",false, true)
                         ),
                 Commands.slash("endsession", "Beende deine Session"),
-                Commands.slash("joinsession", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.")).queue();
+                Commands.slash("joinsession", "Trete einer Session bei oder lasse dich auf die Warteliste setzen."),
+                Commands.slash("joinsession", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.").addOptions(
+                        new OptionData(OptionType.STRING, "user", "Name oder ID des Nutzers den du moven möchtest.",true, true),
+                        new OptionData(OptionType.STRING, "session", "Id der Session in die der Nutzer gemoved werden soll oder 0 wenn den Nutzer aus deiner Session gekickt werden soll.",true, true)
+                )).queue();
 
         logger.info("Finished loading bot. End time: {}", System.currentTimeMillis());
     }

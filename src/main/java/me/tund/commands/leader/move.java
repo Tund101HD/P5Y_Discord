@@ -106,10 +106,42 @@ public class move extends ListenerAdapter {
                                     for(MessageEmbed.Field f : e.getFields()){
                                         if(f.getName().equals("SessionId")){
                                             moveTo = handler.getSessionById(f.getValue());
+                                            moveTo.setLocked(true);
+                                            handler.updateSession(moveTo);
+
+                                            if(moveTo.getActive_participants().contains(finalId1)){ // This shouldn't happen, can't trust shit today though.
+                                                logger.info("User is already part of this session! Will not move. ({})", event.getMember().getEffectiveName());
+                                                return;
+                                            }
+                                            if(moveTo.getActive_participants().size() > 7){
+                                                logger.info("This squad is full! Won't move user. ({})", event.getMember().getEffectiveName());
+                                                moveTo.addParticipant(finalId1);
+                                                if(event.getGuild().getMemberById(finalId1).getVoiceState().inAudioChannel()){
+                                                    event.getGuild().moveVoiceMember(event.getGuild().getMemberById(finalId1), event.getGuild().getVoiceChannelById(Main.WARTERAUM_ID)).queue();
+                                                    event.getGuild().getMemberById(finalId1).getUser().openPrivateChannel().flatMap(pc ->pc.sendMessage("Du wurdest in die Warteschlange versetzt, da dein Leader dich in einen vollen Squad moven wollte.")).queue();
+                                                    event.getGuild().getMemberById(userSession.getLeader_id()).getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("Der Nutzer "+event.getGuild().getMemberById(finalId1).getEffectiveName()+" wurde in die Warteschlange versetzt, da der angegebene Squad voll war.")).queue();
+                                                }
+                                                moveTo.addActive_participant(finalId1);
+                                                if (Utilities.isSquadOne(inputSession.getLeader_id())) { //TODO Maybe add preferred unit move because otherwise the function is useless you fucking retard :)))
+                                                    Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(finalId1),
+                                                            Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND)).queue();
+                                                } else {
+                                                    Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(finalId1),
+                                                            Main.bot.getVoiceChannelById(Main.SQUAD2_GROUND)).queue();
+                                                }
+                                                userSession.removeActive_participant(finalId1);
+                                                moveTo.setLocked(false);
+                                                handler.updateSession(moveTo);
+                                                handler.updateSession(userSession);
+                                            }
                                         }
                                     }
                                 }else{
+                                    event.getHook().deleteOriginal().queue();
+                                    event.getChannel().sendMessage("Du hast den Wechsel abgelehnt.").queue();
+                                    event.getGuild().getMemberById(current.getLeader_id()).getUser().openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("Dem Wechsel des Nutzers "+ event.getGuild().getMemberById(finalId1).getEffectiveName()+" wurde nicht zugestimmt.")).queue();
 
+                                    return;
                                 }
 
                             }
@@ -127,6 +159,7 @@ public class move extends ListenerAdapter {
                     }).queue();
                 }
                 current.getParticipants().add(id);
+                handler.updateSession(current);
                 if(current.getActive_participants().size() > 7){
                     event.getHook().editOriginal("Sorry, aber dein Squad ist voll. Bitte mach Platz für den Nutzer!").queue();
                     return;
@@ -143,6 +176,58 @@ public class move extends ListenerAdapter {
                             Main.bot.getVoiceChannelById(Main.SQUAD2_GROUND)).queue();
                 }
                 current.getActive_participants().add(id);
+                handler.updateSession(current);
+            }else{
+                if(inputSession.getActive_participants().contains(id)){
+                    event.getHook().editOriginal("Sorry, aber dieser Spieler ist bereits Teil dieses Squads!").queue();
+                    return;
+                }
+                if(inputSession.getActive_participants().size() > 7){
+                    event.getHook().editOriginal("Sorry, aber dieser Squad ist bereits voll!").queue();
+                    return;
+                }
+                if(handler.getSessionById(String.valueOf(session)) == null){
+                    event.getHook().editOriginal("Sorry, aber es scheint so als wäre diese Session abgelaufen!").queue();
+                    return;
+                }
+                event.getHook().editOriginal("Der Nutzer ist Teil eines anderen Squads. Bitte warte auf die Bestätigung des anderen Leaders.").queue();
+                long finalId1 = id;
+                Main.bot.getUserById(inputSession.getLeader_id()).openPrivateChannel().flatMap((channel) -> {
+                    event.getJDA().addEventListener(new ListenerAdapter() {
+                        @Override
+                        public void onButtonInteraction(@NotNull ButtonInteractionEvent event) {
+                            if (event.getUser().isBot()){
+                                event.reply("Sorry, only humans allowed :) ").queue();
+                                event.getJDA().removeEventListener(this);
+                                return;
+                            }
+                            event.deferReply().setEphemeral(true).queue();
+                            if(event.getComponentId().equalsIgnoreCase("okay")){
+                                MessageEmbed e = event.getMessage().getEmbeds().get(0);
+                                Session moveTo;
+                                for(MessageEmbed.Field f : e.getFields()){
+                                    if(f.getName().equals("SessionId")){
+                                        moveTo = handler.getSessionById(f.getValue());
+                                    }
+                                }
+                            }else{
+
+                            }
+
+                        }
+                    });
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Wechsel Anfrage für den Nutzer "+ event.getGuild().getMemberById(finalId1).getEffectiveName());
+                    builder.setDescription("Es gibt eine Anfrage, einen Nutzer deiner Session hinzuzufügen.");
+                    builder.addField("Von: ", event.getGuild().getMemberById(current.getLeader_id()).getEffectiveName(), false);
+                    builder.addField("SessionId: ", inputSession.getSession_id(), false);
+                    builder.setFooter("Deine Session: "+ inputSession.getSession_id());
+                    return channel.sendMessage("").setEmbeds(builder.build()).addActionRow(
+                            Button.success("okay", "Schieb ihn rüber!"),
+                            Button.danger("no", "Leck meine Eier") //TODO maybe change this
+                    );
+                }).queue();
+
             }
         }else if(session == 0L){
             Session inputSession = handler.getSessionById(String.valueOf(session));

@@ -65,6 +65,7 @@ public class joinsession extends ListenerAdapter {
                             flatMap(channel -> channel.sendMessage("Es wurde eine Session für dich gefunden, und du wurdest in einen Kanal gezogen." +
                                     "Bitte tausche dich mit " + Main.bot.getUserById(s.getLeader_id()).getEffectiveName() + " aus, welche Rolle du einnehmen sollst.")).queue();
                     s.addActive_participant(member.getDiscord_id());
+                    handler.updateSession(s);
                     return;
                 }
             }
