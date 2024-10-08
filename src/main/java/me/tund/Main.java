@@ -9,6 +9,7 @@ import me.tund.commands.leader.startsession;
 import io.github.cdimascio.dotenv.Dotenv;
 import me.tund.commands.normal.joinsession;
 import me.tund.commands.normal.register.register;
+import me.tund.utils.matchUtils.test;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Activity;
@@ -18,6 +19,8 @@ import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import me.tund.utils.sessions.SessionHandler;
+import nu.pattern.OpenCV;
+import org.opencv.core.Core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         Dotenv dotenv = Dotenv.configure().directory("src/main/resources/.env").load();
+        OpenCV.loadLocally();
         logger.debug("Started loading the bot. Start time: {}", System.currentTimeMillis());
         bot = JDABuilder.create(dotenv.get("TOKEN"),
                         EnumSet.allOf(GatewayIntent.class))
@@ -61,6 +65,7 @@ public class Main {
         bot.addEventListener(new joinsession(sessionHandler));
         bot.addEventListener(new endsession(sessionHandler));
         bot.addEventListener(new move(sessionHandler));
+        bot.addEventListener(new test());
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
                 Commands.slash("register", "Registriere dich um bei CW mitzumachen.").addOptions(new OptionData(OptionType.STRING, "stat", "Welchen Wert du aktualisieren möchtest oder ob du von Vorne Anfangen möchtest.", false, true)),
                 Commands.slash("startsession", "Starte eine CW-Session für Squad1/2. Du musst dich dafür in einem Channel befinden.")
@@ -79,11 +84,11 @@ public class Main {
                         ),
                 Commands.slash("endsession", "Beende deine Session"),
                 Commands.slash("joinsession", "Trete einer Session bei oder lasse dich auf die Warteliste setzen."),
-                Commands.slash("joinsession", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.").addOptions(
+                Commands.slash("move", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.").addOptions(
                         new OptionData(OptionType.STRING, "user", "Name oder ID des Nutzers den du moven möchtest.",true, true),
-                        new OptionData(OptionType.STRING, "session", "Id der Session in die der Nutzer gemoved werden soll oder 0 wenn den Nutzer aus deiner Session gekickt werden soll.",true, true)
-                )).queue();
-
+                        new OptionData(OptionType.STRING, "session", "Id der Session in die der Nutzer gemoved werden soll.",true, true)
+                ),
+                Commands.slash("test", "Test Command du Bastard")).queue();
         logger.info("Finished loading bot. End time: {}", System.currentTimeMillis());
     }
 }
