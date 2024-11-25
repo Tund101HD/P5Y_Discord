@@ -1,5 +1,5 @@
 # P5Y Discord Bot
-<img alt="Static Badge" src="https://img.shields.io/badge/Language-Switch%20to%20english-%20?style=flat&labelColor=%234d4e6b&color=%23701b22&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md"/> <img alt="Static Badge" src="https://img.shields.io/badge/Community-Discord%20beitreten-%20?style=flat&labelColor=%234d4e6b&color=%23505793&link=https%3A%2F%2Fdiscord.gg%2Fpsytune"/>
+<div><img alt="Static Badge" src="https://img.shields.io/badge/Language-Switch%20to%20english-%20?style=flat&labelColor=%234d4e6b&color=%23701b22&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md"/> <img alt="Static Badge" style="margin-left: 3px" src="https://img.shields.io/badge/Community-Discord%20beitreten-%20?style=flat&labelColor=%234d4e6b&color=%23505793&link=https%3A%2F%2Fdiscord.gg%2Fpsytune"/></div>
 
 
 ## Was ist der P5Y Discord Bot?
@@ -120,7 +120,7 @@ Informationen enthalten:
 
 + Aktive Spielzeit als Squad-Mitglied (Wenn du Teil des Squads bist)
 + Aktive Wartezeit auf die Teilnahme (Wenn du offiziell als wartend gekennzeichnet bist)
-+ Informationen über die Teilnahme an Trainings (Wie oft, Welche Trainings, Wann, Welches BR, etc...)
++ Informationen über die Teilnahme an Trainings (Wie oft, Welche Trainings, Wann, Welches BR, etc ...)
 + ggf. Thema von Chat Nachrichten im CW-Kanal (z.B. @Kilian bin ready)
 + Alle Informationen, die du dem Bot während deiner Registration bereitstellst.
 + Spielleistung in Trainings und gespielten CW-Runden anhand der in-game Stats
