@@ -1,5 +1,7 @@
 # P5Y Discord Bot
-<img alt="Static Badge" src="https://img.shields.io/badge/Sprache-Auf%20Deutsch%20wescheln-%20?style=flat&labelColor=%234d4e6b&color=%23701b22&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md"/> <img alt="Static Badge" src="https://img.shields.io/badge/Community-Join%20Discord-%20?style=flat&labelColor=%234d4e6b&color=%23505793&link=https%3A%2F%2Fdiscord.gg%2Fpsytune"/>
+[![Static Badge](https://img.shields.io/badge/Community-Join%20Discord-%20?style=flat&labelColor=%234d4e6b&color=%23505793)
+](https://discord.gg/psytune) [![Static Badge](https://img.shields.io/badge/Sprache-Zu%20Deutsch%20wechseln-%20?style=flat&labelColor=%234d4e6b&color=%23701b22)
+](https://github.com/Tund101HD/P5Y_Discord/blob/main/README.de-DE.md)
 
 
 

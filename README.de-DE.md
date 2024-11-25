@@ -1,5 +1,6 @@
 # P5Y Discord Bot
-<div><img alt="Static Badge" src="https://img.shields.io/badge/Language-Switch%20to%20english-%20?style=flat&labelColor=%234d4e6b&color=%23701b22&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md"/> <img alt="Static Badge" style="margin-left: 3px" src="https://img.shields.io/badge/Community-Discord%20beitreten-%20?style=flat&labelColor=%234d4e6b&color=%23505793&link=https%3A%2F%2Fdiscord.gg%2Fpsytune"/></div>
+[![Static Badge](https://img.shields.io/badge/Community-Discord%20beitreten-%20?style=flat&labelColor=%234d4e6b&color=%23505793)](https://discord.gg/psytune) [![Static Badge](https://img.shields.io/badge/Language-Switch%20to%20english-%20?style=flat&labelColor=%234d4e6b&color=%23701b22)
+](https://github.com/Tund101HD/P5Y_Discord/tree/main)
 
 
 ## Was ist der P5Y Discord Bot?
