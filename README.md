@@ -1,5 +1,6 @@
 # P5Y Discord Bot
-![Static Badge](https://img.shields.io/badge/Sprache-Auf%20Deutsch%20wechseln-%20?style=flat&labelColor=%23505793&color=%236e3605&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2F00aa3c9d0addf0c9f9a6a0e029de0a24a3e9c3e3%2FREADME.de-DE.md&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2F00aa3c9d0addf0c9f9a6a0e029de0a24a3e9c3e3%2FREADME.de-DE.md) ![Static Badge](https://img.shields.io/badge/Community-Join%20Discord-%20?style=flat&labelColor=%23505793&color=%23933a43&link=https%3A%2F%2Fdiscord.gg%2Fpsytune)
+<img alt="Static Badge" src="https://img.shields.io/badge/Sprache-Auf%20Deutsch%20wescheln-%20?style=flat&labelColor=%234d4e6b&color=%23701b22&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md&link=https%3A%2F%2Fgithub.com%2FTund101HD%2FP5Y_Discord%2Fblob%2Fmain%2FREADME.de-DE.md"/> <img alt="Static Badge" src="https://img.shields.io/badge/Community-Join%20Discord-%20?style=flat&labelColor=%234d4e6b&color=%23505793&link=https%3A%2F%2Fdiscord.gg%2Fpsytune"/>
+
 
 
 ## P5Y Discord bot? What is that?
