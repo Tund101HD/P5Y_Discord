@@ -26,7 +26,7 @@ public class SessionChatListener extends ListenerAdapter{
     private final Database db = new Database();
     private final SessionHandler handler = Main.sessionHandler;
     private final Recognizer recognizer = new Recognizer();
-    private static final Logger logger = LoggerFactory.getLogger("SessionChatClient");
+    private static final Logger logger = LoggerFactory.getLogger("P5Y-Sessionchat-Client");
 
     private long channelID = 0;
     public SessionChatListener(long channelID) {

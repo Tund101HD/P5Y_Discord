@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class endsession extends ListenerAdapter {
     private Database db = new Database();
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("EndSessionCommand");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-endsession-Command");
     private final SessionHandler handler;
     public endsession(SessionHandler handler) {
         this.handler = handler;

@@ -23,10 +23,11 @@ import java.util.stream.Stream;
 public class startsession extends ListenerAdapter {
     private Database db = new Database();
     private final SessionHandler handler;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("StartSessionCommand");
-        public startsession(SessionHandler handler) {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-startsession-Command");
+
+    public startsession(SessionHandler handler) {
             this.handler = handler;
-        }
+    }
 
     @Override
     public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
@@ -239,8 +240,6 @@ public class startsession extends ListenerAdapter {
                     event.replyChoices(options).queue();
                     break;
             }
-
-
         }
     }
 

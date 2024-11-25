@@ -15,7 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Utilities {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("UtilClient");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-Utility-Client");
     public Utilities(){
 
     }

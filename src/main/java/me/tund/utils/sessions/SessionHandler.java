@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 
 public class SessionHandler {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("SessionHandlerClient");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-Sessionhandler-Client");
     private List<Session> sessions = new ArrayList<>();
     public  List<SquadMember> waiting = new ArrayList<>();
 

@@ -30,7 +30,7 @@ import java.util.EnumSet;
 public class Main {
 
     public static JDA bot;
-    private static final Logger logger = LoggerFactory.getLogger("ClientMain");
+    private static final Logger logger = LoggerFactory.getLogger("P5Y-Main-Client");
     public static SessionHandler sessionHandler;
     public final static long GUILD_ID = 1168519713274470400L;
     public final static long WARTERAUM_ID = 1270850047386452010L;

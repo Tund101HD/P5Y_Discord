@@ -1,153 +1,150 @@
 # P5Y Discord Bot
 
-## Was ist der P5Y Discord Bot?
+## P5Y Discord bot? What is that?
 
-P5Y Discord Bot soll das Bilden von Squads für unsere CW-Runden erleichtern, indem er automatisch registrierte Benutzer
-den Teams zuordnet und in die Kanäle zieht. Ein Squadleader kann am Anfang einer Session ganz einfach alle wichtigen Daten
-wie Aktivität und das zu spielende Battle Rating eingeben und der Bot kümmert sich um den Rest.
-Nutzer, die dem Wartebereich beitreten, werden automatisch getrackt und sobald ein Platz frei wird automatisch in die richtigen
-Calls gezogen. Des Weiteren soll der Bot eine Objektive Auswahl zwischen den Spielern, anhand der vergangenen Leistung, Aktivität und 
-der Teilnahme an vergangenen Trainings treffen. 
+The P5Y Discord Bot is supposed to make clan wars squad building easier by automatically moving registered users into 
+the correct teams and channels. A squad leader can set all important information, such as min-activity or battle rating, at the beginning
+of the session, and the bot will handle everything else. Users that enter the waiting channel will be tracked automatically and moved into the
+corresponding channels as soon as a space frees itself. Additionally, the bot aids in objective decision-making to select the most fit player
+for a squad, measured by past performance, activity, attended training session and more.
 
-## Was trackt der Discord Bot?
+## What information does the bot track?
 
-+ Spieler Aktivität in CW - Wie viele aktive Runden hast du mitgespielt?
-+ Bereitschaft für CW - Wie lange warst du bereit warst/aktiv gewartet hast
-+ Spieler Aktivität in Trainings - Wie oft hast du an Trainings teilgenommen?
-+ Spieler Rating in den Runden (optional) - Wie gut hast du in den Runden performt?
-+ Spieler Daten - Was ist dein präferiertes BR, welche BRs hast du, welche Units spielst du, etc..
++ Player activity in clan wars - How many active rounds did you play?
++ Readiness for clan wars - How long did you actively wait or hold yourself ready?
++ Player activity in training sessions - How many training sessions did you attend?
++ Player rating in battles - How good did you perform in clan wars battles=
++ Player data - What is your preferred battle rating, what units do you play, etc...
 
-All das soll dafür sorgen, dass der Bot die optimale Entscheidung bei der Auswahl der Spieler trifft und nicht ungeignete Spieler
-z.B. aufgrund von zu hoher Aktivität oder weil sie das passende BR nicht haben.
+All of this enables the bot to make the most optimal decision in choosing a fitting player for the squad to ensure a high success rate
+in our battles and a balanced level of play for you.
 
-## Umgang mit dem Bot
-### Für Squadleader:
-+ Wie kann ich eine Session starten?
+## Usage
+### For squad leaders:
++ How can I start a session?
 > /startsession **(br)*** (min-activity) (min-priority) (exclude_users)
 
-+ Wie kann ich meine Session mit anderen Anforderungen auffüllen lassen?
++ How can I fill a session with different conditions?
 >/fillsession (min-activity) (min-priority) (exclude_users)
 
-+ Wie kann ich Nutzer zu einer anderen Session übertragen?
-> /move **(Nutzer)*** **(session_id)***
++ How can I move members between sessions?
+> /move **(User)*** **(session_id)***
 
-+ Wie kann ich meine Session beenden?
++ How can I end my session?
 > /endsession
     
-+ Wie zähle ich alle Sessions auf? 
++ How do I list all active sessions? 
 > /listsessions
 
-+ Wie werde ich Squad 1?
-> Es gilt, wer zuerst kommt, mahlt zuerst.
++ How to I get to be squad 1?
+> The early bird catches the worm. Be the first to start a session!
 
-Form und Funktion der Optionen:
+All options defined more closely:
     
-    br: Das Battle-Rating auf dem die Runden gespielt werden
-    min-activity: Die Mindestaktivität die ein Benutzer braucht, um mitzuspielen
-    min-priority: Die Mindestpriorität, die ein Benutzer braucht, um mitzuspielen
-    exclude_users: Komma-Separierte-Liste (Nutzer1,Nutzer2,NutzerN...) an gebannten Discord Nutzern
+    br: The battle rating that the session will be playing on
+    min-activity: The minimum activity, that a member needs to automatically join
+    min-priority: The minimum priority, that a member needs to join
+    exclude_users: Comma-Seperated-List (User1,User2,UserN...) of banned users
 > [!NOTE]
-> Der Bot pingt und benachrichtigt Benutzer aus der Datenbank automatisch, wenn sie geeignet sind und noch Leute fehlen!
+> The bot will automatically notify users saved in the database, if they fit the session, and it's not filled up!
 
 > [!NOTE]
-> Angaben die fett und mit einem * markiert sind, sind **_nicht_** optional! Alle anderen schon.
+> Bold options that are marked with a *, are **_not_** optional!
 
 > [!TIP]
-> Der Bot hat häufige Eingaben, wie z.B. alle BRs, als Automcomplete zurückgelegt.
+> Common inputs like all battle ratings can be autocompleted.
 
-### Für Squadmember:
-+ Wie kann ich mich registrieren, um mitzuspielen?
+### For squad members:
++ How can I register myself, to start playing?
 > /register
 
-Bitte befolge nach Eingabe die Anweisungen in deinen DMs!
+After you send this command, please follow instructions in your DMs!
 
-+ Wie trete ich einer Session bei?
++ How do I join a session?
 >/join 
 
-Bitte beachte, dass du eigentlich immer automatisch in den Call gezogen wirst, wenn du bereits wartest und geeignet bist.
-Der Command ist für Leute gedacht, die zu dem Zeitpunkt der Erstellung noch nicht online waren. Es kann passieren dass du 
-auf der Warteliste landest.
+Please remember that usually you should be moved automatically if you fit a session, and you were waiting already. The command
+is meant for users that weren't waiting when the session(s) was/were created. It is possible you will be set on a waiting list.
 
-+ Ab wann werde ich als wartend getrackt?
-> Sobald du in den Kanal "Warteraum" betritts wirst du als wartend gekennzeichnet alternativ kannst du auch
-> `/join` eingeben, wenn du in einem anderen Kanal bist.
++ When does the bot track me as waiting?
+> As soon as you enter the channel "Warteraum" you will be tracked as waiting. Alternatively you can use
+> `/join` if you are in a different channel.
 
 > [!NOTE]
-> Solange du dich nicht gehör-stummst, den AFK-Kanal betrittst oder in einem Sprachkanal bist, wirst du weiterhin als wartend
-> getrackt. D.h. du kannst ruhig auch in die anderen Kanäle rein um zuzuschauen oder mit anderen zu Spielen bis du dran bist.
-> Du wirst benachrichtigt, wenn du auf die Warteliste gesetzt wirst und wenn du von dieser entfernt wirst.
+> As long as you're not deafened, you move into the AFK-Channel, and you are in a voice chat, you will keep being tracked as 
+> waiting, even though you left the waiting channel. That means that you can confidently move into different channels. You will
+> be notified when you get set on or removed from the waiting list.
 
-+ Wie kann ich meine Angaben überprüfen?
++ How can I check my data?
 > /me
 
 
-+ Wie kann ich meine Angaben aus der Registrierung ändern?
-> Gib einfach noch einmal `/register` ein.
++ How can I change the information I entered during registration?
+> Just enter `/register` again.
 
-Bitte achte nochmals auf die Anweisungen in deinen DMs!
+Please follow the instructions in your DMS again!
 
-+ Wie verlasse ich eine Session?
-> Du kannst die Session ganz einfach verlassen, indem du aus allen Sprachkanälen kurz raus gehst. Wenn du ein Mitspieler bist, kannst 
-> einfach in den Warteraum joinen um deine Position freizugeben und dich auf die Warteliste zu setzen. Du wirst dabei für 5 Minuten 
-> aus der Suche entfernt.
++ How do I leave a session?
+> You can leave a session, by simply leaving voice chat. If you are an active member, you can join the waiting channel to
+> free up your position and set yourself onto the waiting list. You will be blocked from search for five minutes.
 
 > [!CAUTION]
-> Wenn du auf der Warteliste stehst, solltest du bereit sein mitzuspielen. Der Bot zieht automatisch geeignete Spieler in die Kanäle, ohne 
-> davor nachzufragen! Stelle sicher, dass du erreichbar bleibst und den Anruf zu jedem Zeitpunk verlassen kannst.
+> If you are added to the waiting list, you should be ready to start playing at all times. The bot will move fitting players automatically into
+> a corresponding channel without asking for permission. Please make sure, you are reachable for the entire time you're waiting, and you can start
+> playing as soon as you get moved.
 
-### Für Admins:
+### For admins:
 
-+ Wie kann ich die IDs der Kanäle und Rollen einstellen?
-> /setid **(Art)*** **(Kanal-ID)***
++ How can I set the ids for roles and channels?
+> /setid **(type)*** **(id)***
 
-    Arten:
-        - Squad1-Boden (Sprachkanal)
-        - Squad1-Luft (Sprachkanal)
-        - Squad2-Boden (Sprachkanal)
-        - Squad2-Luft (Sprachkanal)
-        - Warteraum (Sprachkanal)
-        - AFK (Sprachkanal)
-        - CW-Rolle (Rolle)
-        - SL-Rolle (Rolle)
+    Types:
+        - Squad1-Ground (Voicechannel)
+        - Squad1-Air (Voicechannel)
+        - Squad2-Ground (Voicechannel)
+        - Squad2-Air (Voicechannel)
+        - Waitingroom (Voicechannel)
+        - AFK (Voicechannel)
+        - CW-Role (Role)
+        - SL-Role (Role)
 
-## Welche Daten erhebt der Bot?
+## What data does the bot save?
 
-Der Bot speichert wichtige Daten zur auswertung in seiner internen Datenbank ab um sie später aufzurufen. Dabei erhebt der Bot
-unterschiedliche Informationen über dich, um seiner Aufgabe gerecht zu werden.
-Informationen enthalten:
+The bot keeps track of for evaluation important data in its database, for later use. This means that the bot will save different
+data about you, to fulfill his task. More precisely, the bot saves:
 
-+ Aktive Spielzeit als Squad-Mitglied (Wenn du Teil des Squads bist)
-+ Aktive Wartezeit auf die Teilnahme (Wenn du offiziell als wartend gekennzeichnet bist)
-+ Informationen über die Teilnahme an Trainings (Wie oft, Welche Trainings, Wann, Welches BR, etc...)
-+ ggf. Thema von Chat Nachrichten im CW-Kanal (z.B. @Kilian bin ready)
-+ Alle Informationen, die du dem Bot während deiner Registration bereitstellst.
-+ Spielleistung in Trainings und gespielten CW-Runden anhand der in-game Stats
-+ Deinen jetzigen Sprachkanal (Wenn du offiziell als wartend gekennzeichnet bist)
++ Active playtime as a squad member (If you are part of a squad)
++ Time spent actively waiting to join a squad (If you're officially marked as waiting)
++ Information about participated training sessions (How often, which training, date, battle rating, etc...)
++ Circumstantially the topic of chat messages in the clan wars channel (ex. @Kilian I'm ready!)
++ All information, that you provided during registration
++ Player performance in training sessions and played matches measured by in-game stats
++ Your current voice channel (If you are officially tracked as waiting or participating)
 
-Der Bot speichert ***NICHT***
+The bot does ***not*** save this information:
 
-+ Was du in einem Sprachkanal sagst, streamst oder sonst spielst beim Warten.
-+ Genaue Nachrichten aus dem CW-Chat (Für den Bot ist nur wichtig, was du vorhast. Also bereit sein oder nicht.)
-+ Für den Erfolg der CW-Runden nicht relevante Informationen, wie generelle Aktivität im Chat, Abostand bei PSY oder Ähnliches
-+ Automatisch aufgefrischte Informationen über deine in-game stats (z.B. via Thunderskill)
++ What you say, stream or play in channels during waiting for participation
++ Exact messages in the clan wars channel (The bot only cares what you are planning to do, ex. ready or not?)
++ Non-relevant information that doesn't contribute to the success of matches and session building, for example, general activity in chats or subscription status
++ Automatically refreshed information about your stats (ex. via Thunderskill Api)
 
 > [!IMPORTANT]
-> Mit der Registration stimmst du diesen Bedingungen zu.
+> By registering you take notice and accept of these terms
 
 
-## Wie weit ist die Entwicklung des Bots?
+## How far along is the development of the bot?
 
-- [x] Registrierung und Speicherung von Nutzern
-- [x] Internes Gerüst für die Handhabung von Sessions
+- [x] Registering and saving of users
+- [x] Internal session management 
 - [x] /startsession, /fillsession, /listsessions
 - [ ] /endsession, /move
 - [ ] /join, /me, /setid
-- [ ] Vollendung des Nutzertrackings und der Handhabung der Sessions
-- [ ] Vollendung der Datenbank 
-- [ ] Screenshotverarbeitung zur automatischen Verarbeitung der in-game Stat-Tabelle
-- [ ] Schreiben von Dokumentation, Code aufbessern
+- [ ] Finalising user tracking and session management
+- [ ] Finalising the database
+- [ ] Image recognition and OCR model for parsing in-game stat tables
+- [ ] Code documentation and refactoring (The boring stuff)
 
-## Ideen, wünsche oder einen Bug gefunden?
+## Ideas, wishes or found a bug?
 
-Dann schreib mir entweder direkt eine DM auf Discord unter `Tund_101_HD` oder wende dich an Kilian (`SlatanKiliankowitz`)
-Du kannst auch alternativ auf diesem Github-Repository ein Problem erstellen unter https://github.com/Tund101HD/P5Y_Discord/issues/new
+Please DM me directly under `Tund_101_HD` or speak to Kilian (`SlatanKiliankowitz`)
+Alternatively, you can open an issue on this GitHub repo: https://github.com/Tund101HD/P5Y_Discord/issues/new

@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class RegisterListener extends ListenerAdapter {
 
 
-    private static final Logger logger = LoggerFactory.getLogger("RegisterListenerClient");
+    private static final Logger logger = LoggerFactory.getLogger("P5Y-Register-Client");
     private Database database = new Database();
     private long channel_id;
     private long user_id;

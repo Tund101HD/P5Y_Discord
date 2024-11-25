@@ -19,7 +19,7 @@ public class SessionRefreshTask implements Runnable {
     public SessionRefreshTask(Session session, SessionHandler handler) {
         this.session = session;
         this.handler = handler;
-        this.logger=LoggerFactory.getLogger("SessionRefreshClient-"+session.getSession_id());
+        this.logger=LoggerFactory.getLogger("P5Y-Sessionrefresh-"+session.getSession_id());
         logger.debug("Session has been successfully started. Current activity: {} ; Current members: {} ; Time is: {}",
                 session, session.getActive_participants(), System.currentTimeMillis());
     }

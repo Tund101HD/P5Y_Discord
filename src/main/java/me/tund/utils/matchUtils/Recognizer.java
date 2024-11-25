@@ -44,7 +44,7 @@ public class Recognizer {
             tesseract.setVariable("matcher_bad_match_pad", "0.13");
             tesseract.setVariable("tessedit_unrej_any_wd", "1");
             tesseract.setVariable("tessedit_override_permuter", "0");
-            tesseract.setVariable("tessedit_char_whitelist", "0123456789");
+            tesseract.setVariable("tessedit_char_whitelist", "0123456789"); //Numbers only
             tesseract.setDatapath("src/main/resources/ocr");
             tesseract.setLanguage(lang);
             result = tesseract.doOCR(mat2BufferedImage(grayMat));

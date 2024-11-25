@@ -29,7 +29,7 @@ public class register extends ListenerAdapter {
 
     private final Database db = new Database();
     private final Guild g = Main.bot.getGuildById(Main.GUILD_ID);
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("RegisterCommand");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-register-Command");
 
     public register() {
 

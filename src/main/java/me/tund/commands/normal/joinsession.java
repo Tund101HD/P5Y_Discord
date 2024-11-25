@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 public class joinsession extends ListenerAdapter {
     private Database db = new Database();
     private final SessionHandler handler;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("JoinSessionCommand");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-joinsession-Command");
     public joinsession(SessionHandler handler) {
         this.handler = handler;
     }

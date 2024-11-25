@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 public class Database {
 
     public Connection con;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("DatabaseClient");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-Database-Client");
 
     public Database(){
         Dotenv dotenv = Dotenv.load();
@@ -29,6 +29,7 @@ public class Database {
         }catch (SQLException e){
             e.printStackTrace();
         }
+        logger.info("Database connection alive");
     }
 
     public boolean addUserEntry(String uuid, String username, boolean[] brs, String preferred_unit, int preferred_br, String activity, double kd, boolean replace, int priority){

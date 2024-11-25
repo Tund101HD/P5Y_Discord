@@ -10,7 +10,7 @@ import java.util.List;
 public class SessionWaitingRefreshTask implements Runnable{
 
     private final Guild g = Main.bot.getGuildById(Main.GUILD_ID);
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("WaitingRefreshClient");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-Waitingrefresh-Task");
     @Override
     public void run() {
         List<SquadMember> waiting = Main.sessionHandler.waiting;

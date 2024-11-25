@@ -20,7 +20,7 @@ import java.util.stream.Stream;
 
 public class fillsession extends ListenerAdapter {
     private Database db = new Database();
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("FillSessionCommand");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-fillsession-command");
     private final SessionHandler handler;
     public fillsession(SessionHandler handler) {
         this.handler = handler;

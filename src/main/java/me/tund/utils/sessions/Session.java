@@ -242,6 +242,7 @@ public class Session {
         this.channel_id = channel_id;
     }
 
+    // TODO Rework this feature
     /**
      * Lock the Session from autofilling.
      * @return
