@@ -1,23 +1,32 @@
 package me.tund.utils.matchUtils;
 
+import com.google.common.primitives.Ints;
+import com.google.gson.JsonObject;
 import me.tund.Main;
 import me.tund.database.Database;
+import me.tund.utils.matchUtils.imageUtils.YoloWrapper;
 import me.tund.utils.sessions.SessionHandler;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.io.FileUtils;
+import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.awt.image.DataBufferInt;
+import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -50,38 +59,37 @@ public class SessionChatListener extends ListenerAdapter{
             i++;
         }
         i=0;
-        String[] responses = new String[10];
         for(Message.Attachment attachment : pictures) {
             if(attachment == null) continue;
             CompletableFuture<InputStream> stream = attachment.getProxy().download();
             try {
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 InputStream inputStream = stream.get();
-                byte[] bytes = {};
-                try {
-                    bytes = inputStream.readAllBytes();
-                } catch (IOException e) {
-                    logger.info("Couldn't read image. Exiting");
+                inputStream.transferTo(baos);
+                InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
+                InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
+                JsonObject detections =  YoloWrapper.getDetections(firstClone);
+
+                Mat[] mats = YoloWrapper.drawDetectionsOnImage(secondClone, detections);
+                ArrayList<FileUpload> files = new ArrayList<>();
+                for (int j = 0; j < mats.length; j++) {
+                    BufferedImage gray = YoloWrapper.Mat2BufferedImage(mats[j]);
+                    byte[] bytes =  YoloWrapper.toByteArray(gray, "jpg");
+                    files.add(FileUpload.fromData(bytes, "test"+j+".jpg"));
                 }
-                if(bytes == null || bytes.length == 0) continue;
-                Mat mat = Imgcodecs.imdecode(new MatOfByte(bytes), Imgcodecs.IMREAD_UNCHANGED);
-                responses[i] = recognizer.extractStringFromMat(mat, "rus+deu+eng"); //FIXME Find Solution for OCR Precision
-                i++;
+                event.getChannel().sendFiles(files).queue();
+                event.getChannel().sendMessage(recognizer.recognizeFriendlyPlayerScores(mats[2], mats[1])).queue();
             } catch (InterruptedException e) {
-                logger.info("Download of attachment was interrupted. Exiting");
+                logger.error("Download of attachment was interrupted. Exiting");
                 continue;
             } catch (ExecutionException e) {
-                logger.info("Couldn't download attachment. Exiting");
+                logger.error("Couldn't download attachment. Exiting");
                 continue;
             } catch (Exception e){
-                logger.info("Couldn't download attachment for unknown reason. Exiting");
+                logger.error("Couldn't download attachment for unknown reason. Exiting");
+                e.printStackTrace();
                 continue;
             }
-        }
-        if(responses.length == 0) return;
-        if (channelID == 0) return;
-        for(String response : responses) {
-            if(response == null) continue;
-            event.getGuild().getTextChannelById(channelID).sendMessage("Extracted Text from Image is: \n"+response).queue();
         }
     }
 
