@@ -1,10 +1,9 @@
 package me.tund.database;
 
 import io.github.cdimascio.dotenv.Dotenv;
+import me.tund.utils.Utilities;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import me.tund.utils.Utilities;
-import org.mariadb.jdbc.export.Prepare;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;

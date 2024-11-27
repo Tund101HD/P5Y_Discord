@@ -40,3 +40,5 @@ build/
 /.git/
 /src/main/resources/.env
 /.idea/
+
+/src/main/resources/p5y-discordbot-b77a2e09d604.json

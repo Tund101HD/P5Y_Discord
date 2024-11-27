@@ -1,31 +1,24 @@
 package me.tund.utils.matchUtils;
 
-import com.google.common.primitives.Ints;
 import com.google.gson.JsonObject;
 import me.tund.Main;
 import me.tund.database.Database;
+import me.tund.utils.Utilities;
 import me.tund.utils.matchUtils.imageUtils.YoloWrapper;
 import me.tund.utils.sessions.SessionHandler;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.utils.FileUpload;
 import org.apache.commons.io.FileUtils;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.MatOfDMatch;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferByte;
-import java.awt.image.DataBufferInt;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.IntBuffer;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -69,16 +62,10 @@ public class SessionChatListener extends ListenerAdapter{
                 InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
                 InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
                 JsonObject detections =  YoloWrapper.getDetections(firstClone);
-
-                Mat[] mats = YoloWrapper.drawDetectionsOnImage(secondClone, detections);
-                ArrayList<FileUpload> files = new ArrayList<>();
-                for (int j = 0; j < mats.length; j++) {
-                    BufferedImage gray = YoloWrapper.Mat2BufferedImage(mats[j]);
-                    byte[] bytes =  YoloWrapper.toByteArray(gray, "jpg");
-                    files.add(FileUpload.fromData(bytes, "test"+j+".jpg"));
-                }
-                event.getChannel().sendFiles(files).queue();
-                event.getChannel().sendMessage(recognizer.recognizeFriendlyPlayerScores(mats[2], mats[1])).queue();
+                Mat[] mats = YoloWrapper.detectionsToImage(secondClone, detections);
+                MessageEmbed embed = recognizer.recognizeFriendlyPlayerScores(mats[1], mats[0]);
+                event.getChannel().sendMessageEmbeds(embed).queue();
+               // event.getChannel().sendMessageEmbeds(recognizer.recognizeEnemyPlayerScores(mats[3], mats[2], embed.getTitle().split("\\|")[1].split(":")[1].stripLeading())).queue(); //TODO Maybe train custom OCR model in https://cloud.google.com/use-cases/ocr?hl=en as gemini is retarded
             } catch (InterruptedException e) {
                 logger.error("Download of attachment was interrupted. Exiting");
                 continue;

@@ -1,8 +1,13 @@
 package me.tund.utils.matchUtils;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import me.tund.Main;
 import me.tund.database.Database;
+import me.tund.utils.matchUtils.imageUtils.YoloWrapper;
 import me.tund.utils.sessions.SessionHandler;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.sourceforge.tess4j.Tesseract;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfByte;
@@ -56,6 +61,15 @@ public class Recognizer {
         }
         return result;
     }
+
+    /**
+     * @deprecated
+     * Legacy tesseract api method for extracting text. (To be removed)
+     * @param input Input Mat to apply OCR on
+     * @param lang Language for the detection (Typically rus+eng+deu for text and eng for scores)
+     * @return A String containing all detected text
+     * @throws Exception
+     */
     public String extractNamesFromMat(Mat input, String lang) throws Exception {
         String result = "";
         Mat grayMat = new Mat();
@@ -79,6 +93,14 @@ public class Recognizer {
         return result;
     }
 
+    /**
+     * Converts a Mat to a BufferedImage with type jpg.
+     *
+     * DO NOT USE WITH ANY RECOGNIZER MODEL AS THERE IS NO PREPROCESSING
+     * @param matrix
+     * @return BufferedImage (jpg)
+     * @throws Exception
+     */
     public static BufferedImage mat2BufferedImage(Mat matrix)throws Exception {
         MatOfByte mob=new MatOfByte();
         Imgcodecs.imencode(".jpg", matrix, mob);
@@ -88,12 +110,103 @@ public class Recognizer {
         return bi;
     }
 
-    public String recognizeFriendlyPlayerScores(Mat players, Mat scores) throws Exception {
-        StringBuilder sb = new StringBuilder();
-        String score = this.extractScoresFromMat(scores, "eng");
-        String names = this.extractNamesFromMat(players, "rus+deu+eng");
+    /**
+     * Uses Vertex AI to convert the preprocessed images into text and combines the data
+     * @param players Mat image containing friendly players
+     * @param scores Mat image containing friendly scores
+     * @return EmbedMessage containing PlayerStats
+     * @throws Exception
+     */
+    public MessageEmbed recognizeFriendlyPlayerScores(Mat players, Mat scores) throws Exception {
+        JsonObject score = Main.gemini.getScores(YoloWrapper.Mat2BufferedImage(scores));
+        JsonObject names = Main.gemini.getPlayerNames(YoloWrapper.Mat2BufferedImage(players));
+        if(names == null || scores == null){
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Error: Couldn't process image!");
+            builder.setFooter("Null Items");
+            return builder.build();
+        }
 
-        return "\nScores:\n "+score + "\nNames:\n "+names;
+        try{
+            EmbedBuilder builder = new EmbedBuilder();
+            StringBuilder strings = new StringBuilder();
+            JsonArray scoreArray = score.getAsJsonArray("scores");
+            JsonArray namesArray = names.get("players").getAsJsonArray();
+            builder.setTitle("Stats für "+names.getAsJsonObject("clan").get("name").getAsString()+"| Runden-ID: "+System.currentTimeMillis());
+            builder.addBlankField(false);
+            for (int i = 0; i < scoreArray.size(); i++) {
+                String[] s = scoreArray.get(i).getAsString().split(" ");
+                strings.append("Deaths: ").append(s[0]).append("\n");
+                strings.append("Points: ").append(s[1]).append("\n");
+                strings.append("Assists: ").append(s[2]).append("\n");
+                strings.append("Kills (Ground): ").append(s[3]).append("\n");
+                strings.append("Kills (Air): ").append(s[4]).append("\n");
+                strings.append("Total Score: ").append(s[5]).append("\n");
+
+
+                for (int j = 0; j < namesArray.size(); j++) {}
+                builder.addField(namesArray.get(i).getAsString(),
+                        strings.toString(),
+                        false
+                );
+                strings.setLength(0);
+            }
+            builder.addBlankField(false);
+            builder.setFooter("Nice round!");
+            return builder.build();
+        }catch (Exception e){
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Error: Couldn't process image!");
+            builder.setDescription(e.getMessage());
+            builder.setFooter("Malformed JSON");
+            return builder.build();
+        }
+    }
+
+    /**
+     * Uses Vertex AI to convert the preprocessed images into text and combines the data
+     * @param players Mat image containing enemy players
+     * @param scores Mat image containing enemy scores
+     * @return EmbedMessage containing PlayerStats
+     * @throws Exception
+     */
+    public MessageEmbed recognizeEnemyPlayerScores(Mat players, Mat scores, String roundID) throws Exception {
+        JsonObject score = Main.gemini.getScores(YoloWrapper.Mat2BufferedImage(scores));
+        JsonObject names = Main.gemini.getEnemyPlayerNames(YoloWrapper.Mat2BufferedImage(players));
+        if(names == null || scores == null){
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Error: Couldn't process image!");
+            builder.setFooter("Null Items");
+            return builder.build();
+        }
+
+
+        EmbedBuilder builder = new EmbedBuilder();
+        StringBuilder strings = new StringBuilder();
+        JsonArray scoreArray = score.getAsJsonArray("scores");
+        JsonArray namesArray = names.get("players").getAsJsonArray();
+        builder.setTitle("Stats für "+names.getAsJsonObject("clan").get("name").getAsString()+"| Runden-ID: "+roundID);
+        builder.addBlankField(false);
+        for (int i = 0; i < scoreArray.size(); i++) {
+            String[] s = scoreArray.get(i).getAsString().split(" ");
+            strings.append("Deaths: ").append(s[0]).append("\n");
+            strings.append("Points: ").append(s[1]).append("\n");
+            strings.append("Assists: ").append(s[2]).append("\n");
+            strings.append("Kills (Ground): ").append(s[3]).append("\n");
+            strings.append("Kills (Air): ").append(s[4]).append("\n");
+            strings.append("Total Score: ").append(s[5]).append("\n");
+
+
+            for (int j = 0; j < namesArray.size(); j++) {}
+            builder.addField(namesArray.get(i).getAsString(),
+                    strings.toString(),
+                    false
+            );
+            strings.setLength(0);
+        }
+        builder.addBlankField(false);
+        builder.setFooter("Nice round!");
+        return builder.build();
     }
 
 

@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import io.github.cdimascio.dotenv.Dotenv;
+import me.tund.utils.matchUtils.Recognizer;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.opencv.core.*;
@@ -19,6 +20,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+
+import static org.opencv.imgproc.Imgproc.*;
 
 public class YoloWrapper {
 
@@ -69,53 +72,25 @@ public class YoloWrapper {
         return null;
     }
 
-    public static Mat[] drawDetectionsOnImage(InputStream fis, JsonObject detections) throws IOException {
+    /**
+     * Return an array of Mat images for each detection class
+     * 0: friendly_scores
+     * 1: friendly_names
+     * 2: enemy_scores
+     * 3: enemy_names
+     * 4: full_scoreboard @Empty Mat for speed reasons (No usage right now)
+     * 5: friendly_vehicles @Empty Mat for speed reasons (No usage right now)
+     * @param fis Inputstream of the full image
+     * @param detections Roboflow response containing the detections
+     * @return Mat[] of all detections
+     */
+    public static Mat[] detectionsToImage(InputStream fis, JsonObject detections) throws IOException {
         byte [] bytes = fis.readAllBytes();
         Mat mat = Imgcodecs.imdecode(new MatOfByte(bytes), Imgcodecs.IMREAD_UNCHANGED);
         Mat[] standAloneImages = convertDetectionsToStandaloneMatImages(mat.clone(), detections.getAsJsonArray("predictions"));
-        JsonArray ary = detections.getAsJsonArray("predictions");
-        for (int i = 0; i < ary.size(); i++) {
-            JsonObject object = ary.get(i).getAsJsonObject();
-            double x = object.get("x").getAsDouble();
-            double y = object.get("y").getAsDouble();
-            double width = object.get("width").getAsDouble();
-            double height = object.get("height").getAsDouble();
-            int x1 = (int)(x - width / 2);
-            int y1 = (int)(y - height / 2);
-            int x2 = (int)(x + width / 2);
-            int y2 = (int)(y + height / 2);
-            Scalar color = new Scalar(255, 255, 255, 1);
-            switch (object.get("class").getAsString()) {
-                case "Enemy Score":
-                    color = new Scalar(255, 0, 0, 1);
-                    break;
-                case "Friendly Score":
-                    color = new Scalar(0, 255, 0, 1);
-                     break;
-                case "Enemy Names":
-                    color = new Scalar(0, 0, 255, 1);
-                    break;
-                case "Friendly Names":
-                    color = new Scalar(255, 255, 0, 1);
-                    break;
-                case "Full Scoreboard":
-                    color = new Scalar(0, 255, 255, 1);
-                    break;
-                case "Friendly Vehicles":
-                    color = new Scalar(0, 0, 0, 1);
-                    break;
-            }
-            Imgproc.rectangle(mat, new Point(x1, y1), new Point(x2,y2 ), color, 2);
-            Imgproc.putText(mat, "Erkannt: "+object.get("class").getAsString(),new Point(x1, y1-15), 1, 1, color, 2 );
-            Imgproc.putText(mat, "Confidence: "+Math.round(object.get("confidence").getAsDouble()*100)+"%",new Point(x1, y1-5), 1, 1, color, 2 );
-        }
-        Mat[] allImages = new Mat[standAloneImages.length];
-        allImages[0] = mat;
-        for (int i = 1; i < standAloneImages.length; i++) {
-            allImages[i] = standAloneImages[i-1];
-        }
+        logger.info("Size of standalone images: {}", standAloneImages.length);
         if(fis != null) fis.close();
-        return allImages;
+        return standAloneImages;
     }
 
 
@@ -137,12 +112,17 @@ public class YoloWrapper {
         return json;
     }
 
-    public static BufferedImage Mat2BufferedImage(Mat mat) throws IOException{
-        MatOfByte matOfByte = new MatOfByte();
-        Imgcodecs.imencode(".jpg", mat, matOfByte);
-        byte[] byteArray = matOfByte.toArray();
-        InputStream in = new ByteArrayInputStream(byteArray);
-        BufferedImage bufImage = ImageIO.read(in);
+    /**
+     * Preprocesses the Mat to display a black and white image for maximum accuracy in image recognition
+     * @param mat Input Mat of type RGB
+     * @return A black and white BufferedImage
+     * @throws IOException
+     */
+    public static BufferedImage Mat2BufferedImage(Mat mat) throws Exception {
+        Mat grayMat = new Mat();
+        cvtColor(mat, grayMat, COLOR_RGB2GRAY);
+        Imgproc.threshold(grayMat.clone(), grayMat,120, 255, THRESH_OTSU);
+        BufferedImage bufImage = Recognizer.mat2BufferedImage(grayMat);
         return bufImage;
     }
 
@@ -153,6 +133,18 @@ public class YoloWrapper {
         return bytes;
     }
 
+    /**
+     * Return an array of Mat images for each detection class
+     * 0: friendly_scores
+     * 1: friendly_names
+     * 2: enemy_scores
+     * 3: enemy_names
+     * 4: full_scoreboard
+     * 5: friendly_vehicles
+     * @param src
+     * @param detections
+     * @return
+     */
     private static Mat[] convertDetectionsToStandaloneMatImages(Mat src, JsonArray detections){ //FIXME This is incredibly slow fix this. Is src.clone() really needed?
         Mat friendly_scores = new Mat();
         Mat friendly_names = new Mat();

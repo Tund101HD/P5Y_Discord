@@ -9,6 +9,7 @@ import me.tund.commands.leader.startsession;
 import io.github.cdimascio.dotenv.Dotenv;
 import me.tund.commands.normal.joinsession;
 import me.tund.commands.normal.register.register;
+import me.tund.utils.matchUtils.imageUtils.GeminiWrapper;
 import me.tund.utils.matchUtils.test;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -20,10 +21,15 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import me.tund.utils.sessions.SessionHandler;
 import nu.pattern.OpenCV;
-import org.opencv.core.Core;
+import com.google.api.gax.paging.Page;
+import com.google.cloud.storage.Bucket;
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
+import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.EnumSet;
 
 
@@ -32,6 +38,7 @@ public class Main {
     public static JDA bot;
     private static final Logger logger = LoggerFactory.getLogger("P5Y-Main-Client");
     public static SessionHandler sessionHandler;
+    public static GeminiWrapper gemini;
     public final static long GUILD_ID = 1168519713274470400L;
     public final static long WARTERAUM_ID = 1270850047386452010L;
     public final static long SQUAD1_GROUND = 1270849917526474793L;
@@ -44,7 +51,7 @@ public class Main {
 
 
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
         Dotenv dotenv = Dotenv.configure().directory("src/main/resources/.env").load();
         OpenCV.loadLocally();
         logger.debug("Started loading the bot. Start time: {}", System.currentTimeMillis());
@@ -58,6 +65,7 @@ public class Main {
         builder.setOwnerId("1158495140969713815");
         CommandClient client = builder.build();
         sessionHandler = new SessionHandler();
+        gemini = new GeminiWrapper();
         bot.addEventListener(client);
         bot.addEventListener(new startsession(sessionHandler));
         bot.addEventListener(new fillsession(sessionHandler));
@@ -89,6 +97,7 @@ public class Main {
                         new OptionData(OptionType.STRING, "session", "Id der Session in die der Nutzer gemoved werden soll.",true, true)
                 ),
                 Commands.slash("test", "Test Command du Bastard")).queue();
+
         logger.info("Finished loading bot. End time: {}", System.currentTimeMillis());
     }
 }
