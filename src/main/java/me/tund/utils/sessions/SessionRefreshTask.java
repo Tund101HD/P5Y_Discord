@@ -60,7 +60,7 @@ public class SessionRefreshTask implements Runnable {
 
                     /**
                      *  Evaluates the internal rating of a member using a formula. Internal Rating is dynamically calculated using user stats
-                     *  and average rating of the squad to assure a good fit to the squad. Fitness is OBJECTIVE except the priority given by
+                     *  and average rating of the squad to ensure a good fit to the squad. Fitness is OBJECTIVE except the priority given by
                      *  squad leaders.
                      */
                     while(session.getActive_participants().size() < 8 && suitable.size() > 0){
@@ -104,7 +104,7 @@ public class SessionRefreshTask implements Runnable {
                             handler.waiting.remove(m);
                             continue;
                         }
-                        // Check if current Squad is Squad 1 or Squad 2 to move member.
+                        // Check if the current Squad is Squad 1 or Squad 2 to move member.
                         if(session.isSqaudOne() ){
                             if(m.getPreferred_unit().equalsIgnoreCase("ground")){
                                 Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(suitable_m, Main.bot.getVoiceChannelById(Main.SQUAD1_GROUND)).queue();
@@ -186,7 +186,7 @@ public class SessionRefreshTask implements Runnable {
             }
             session.setParticipant_time_played(map);
 
-            // Waittime for users not in the channel.
+            // Waiting time for users not in the channel.
             List<SquadMember> waiting = handler.waiting;
             HashMap<Long, Integer> map2 = session.getParticipant_time_played();
 
@@ -210,8 +210,5 @@ public class SessionRefreshTask implements Runnable {
 
         }
         handler.updateSession(session);
-        if(session.isClosing) {
-           handler.saveAndCloseSession(session);
-        }
     }
 }

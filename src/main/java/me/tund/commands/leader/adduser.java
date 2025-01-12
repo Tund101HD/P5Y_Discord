@@ -36,7 +36,7 @@ public class adduser extends ListenerAdapter {
             return;
         }
         Session session = handler.getSessionByLeader(event.getMember().getIdLong());
-        long user = (!event.getOptions().contains("user")) ? 0L : event.getOption("user").getAsLong();
+        long user = (!event.getOptions().contains("user")) ? 0L : event.getOption("user").getAsLong(); //TODO make it accept names too
         if(session.getActive_participants().contains(user)){
             event.getHook().editOriginal("Sorry, aber dieser Nutzer ist bereits Teil deines Squads.").queue();
             return;

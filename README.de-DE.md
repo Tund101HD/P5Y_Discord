@@ -143,8 +143,8 @@ Der Bot speichert ***NICHT***
 - [x] Registrierung und Speicherung von Nutzern
 - [x] Internes Gerüst für die Handhabung von Sessions
 - [x] /startsession, /fillsession, /listsessions
-- [ ] /endsession, /move
-- [ ] /join, /me, /setid
+- [x] /endsession, /move
+- [ ] /join, /stats, /setid
 - [ ] Vollendung des Nutzertrackings und der Handhabung der Sessions
 - [ ] Vollendung der Datenbank 
 - [ ] Screenshotverarbeitung zur automatischen Verarbeitung der in-game Stat-Tabelle

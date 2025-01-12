@@ -142,8 +142,8 @@ The bot does ***not*** save this information:
 - [x] Registering and saving of users
 - [x] Internal session management 
 - [x] /startsession, /fillsession, /listsessions
-- [ ] /endsession, /move
-- [ ] /join, /me, /setid
+- [x] /endsession, /move
+- [ ] /join, /stats, /setid
 - [ ] Finalising user tracking and session management
 - [ ] Finalising the database
 - [ ] Image recognition and OCR model for parsing in-game stat tables

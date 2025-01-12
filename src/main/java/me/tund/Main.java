@@ -5,7 +5,9 @@ import com.jagrosh.jdautilities.command.CommandClientBuilder;
 import me.tund.commands.leader.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import me.tund.commands.normal.joinsession;
+import me.tund.commands.normal.listsessions;
 import me.tund.commands.normal.register.register;
+import me.tund.commands.normal.stats;
 import me.tund.commands.normal.waiting;
 import me.tund.utils.matchUtils.imageUtils.GeminiWrapper;
 import me.tund.utils.matchUtils.test;
@@ -68,6 +70,8 @@ public class Main {
         bot.addEventListener(new kickuser(sessionHandler));
         bot.addEventListener(new waiting(sessionHandler));
         bot.addEventListener(new adduser(sessionHandler));
+        bot.addEventListener(new listsessions(sessionHandler));
+        bot.addEventListener(new stats(sessionHandler));
         bot.addEventListener(new test());
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
                 Commands.slash("register", "Registriere dich um bei CW mitzumachen.").addOptions(new OptionData(OptionType.STRING, "stat", "Welchen Wert du aktualisieren möchtest oder ob du von Vorne Anfangen möchtest.", false, true)),
@@ -94,7 +98,11 @@ public class Main {
                 Commands.slash("adduser", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.").addOptions(
                         new OptionData(OptionType.STRING, "user", "Name oder ID des Nutzers den du moven möchtest.",true, true)
                 ),
+                Commands.slash("stats", "Siehe dir deine Stats oder die eines anderen Spielers an.").addOptions(
+                        new OptionData(OptionType.STRING, "user", "Name oder ID eines anderen Spielers. Lasse das Feld leer wenn du deine Stats sehen möchtest.",false, false)
+                ),
                 Commands.slash("waiting", "Trete einer Session bei oder lasse dich auf die Warteliste setzen."),
+                Commands.slash("listsessions", "Liste alle aktiven Sessions auf."),
                 Commands.slash("kickuser", "Kicke einen Nutzer aus deiner Session.").addOptions(
                         new OptionData(OptionType.STRING, "user", "Name oder ID des Nutzers, den du kicken möchtest",true, true),
                         new OptionData(OptionType.STRING, "reason", "Einen Grund warum der Nutzer gekickt wurde.",false, true),
