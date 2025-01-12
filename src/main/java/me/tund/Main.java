@@ -2,10 +2,7 @@ package me.tund;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
-import me.tund.commands.leader.endsession;
-import me.tund.commands.leader.fillsession;
-import me.tund.commands.leader.move;
-import me.tund.commands.leader.startsession;
+import me.tund.commands.leader.*;
 import io.github.cdimascio.dotenv.Dotenv;
 import me.tund.commands.normal.joinsession;
 import me.tund.commands.normal.register.register;
@@ -21,15 +18,9 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import me.tund.utils.sessions.SessionHandler;
 import nu.pattern.OpenCV;
-import com.google.api.gax.paging.Page;
-import com.google.cloud.storage.Bucket;
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
 import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 import java.util.EnumSet;
 
 
@@ -73,6 +64,7 @@ public class Main {
         bot.addEventListener(new joinsession(sessionHandler));
         bot.addEventListener(new endsession(sessionHandler));
         bot.addEventListener(new move(sessionHandler));
+        bot.addEventListener(new kickuser(sessionHandler));
         bot.addEventListener(new test());
         bot.getGuildById(Main.GUILD_ID).updateCommands().addCommands(
                 Commands.slash("register", "Registriere dich um bei CW mitzumachen.").addOptions(new OptionData(OptionType.STRING, "stat", "Welchen Wert du aktualisieren möchtest oder ob du von Vorne Anfangen möchtest.", false, true)),
@@ -95,6 +87,12 @@ public class Main {
                 Commands.slash("move", "Trete einer Session bei oder lasse dich auf die Warteliste setzen.").addOptions(
                         new OptionData(OptionType.STRING, "user", "Name oder ID des Nutzers den du moven möchtest.",true, true),
                         new OptionData(OptionType.STRING, "session", "Id der Session in die der Nutzer gemoved werden soll.",true, true)
+                ),
+                Commands.slash("kickuser", "Kicke einen Nutzer aus deiner Session.").addOptions(
+                        new OptionData(OptionType.STRING, "user", "Name oder ID des Nutzers, den du kicken möchtest",true, true),
+                        new OptionData(OptionType.STRING, "reason", "Einen Grund warum der Nutzer gekickt wurde.",false, true),
+                        new OptionData(OptionType.STRING, "auto_fill", "Ob die Session nach dem Kick automatisch aufgefüllt werden soll.",false, true),
+                        new OptionData(OptionType.STRING, "ban_user", "Ob der Nutzer für diese Session gesperrt werden soll.",false, true)
                 ),
                 Commands.slash("test", "Test Command du Bastard")).queue();
 

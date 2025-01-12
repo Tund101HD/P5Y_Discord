@@ -34,6 +34,8 @@ public class joinsession extends ListenerAdapter {
                 return;
             }
         }
+
+
         SquadMember member = db.getSquadMemberById(event.getMember().getIdLong());
         for(Session s : handler.getSessions()){
             if(!s.isActive() && !s.isClosing()){
@@ -60,7 +62,6 @@ public class joinsession extends ListenerAdapter {
                                     Main.bot.getVoiceChannelById(Main.SQUAD2_AIR)).queue();
                         }
                     }
-
                     Main.bot.getUserById(member.getDiscord_id()).openPrivateChannel().
                             flatMap(channel -> channel.sendMessage("Es wurde eine Session für dich gefunden, und du wurdest in einen Kanal gezogen." +
                                     "Bitte tausche dich mit " + Main.bot.getUserById(s.getLeader_id()).getEffectiveName() + " aus, welche Rolle du einnehmen sollst.")).queue();

@@ -109,6 +109,12 @@ public class SessionHandler {
     public void removeSession(Session session) {
         sessions.remove(session);
     }
+
+    /**
+     * Get the Session the user is currently *actively* playing in. Returns null if the user is in no Session or waiting.
+     * @param id
+     * @return The user's active Session
+     */
     public Session getSessionByUser(long id){
         for(Session session : sessions) {
             if(session.getActive_participants().contains(id)) return session;
@@ -117,7 +123,7 @@ public class SessionHandler {
     }
 
     /**
-     * Updates a specific session's value in memory. Needs to be called everytime a value (Like the Active_Participants) changes.
+     * Updates a specific session's value in memory. This is called everytime the Session refreshes.
      * @param session The Session to be updated
      */
     public void updateSession(Session session) {

@@ -49,6 +49,7 @@ public class SessionRefreshTask implements Runnable {
                     List<SquadMember> members = new ArrayList<>();
                     List<SquadMember> suitable = new ArrayList<>();
                     for(SquadMember member : waiting){
+                        if(session.getExclude_ids().contains(member.getDiscord_id())) continue; // Exclude banned Members
                         if(member.getActivity() >= session.getMin_acitivty() && member.getPriority() >= session.getMin_priority()){
                             suitable.add(member);
                         }
@@ -97,6 +98,12 @@ public class SessionRefreshTask implements Runnable {
                             continue;
                         }
 
+                        //User already is in a Squad and hasn't been removed for some reason
+                        if(handler.getSessionByUser(suitable_m.getIdLong()) != null){
+                            logger.warn("Member {}({}) is already part of a Squad. Skipping.", suitable_m.getEffectiveName(), suitable_m.getId());
+                            handler.waiting.remove(m);
+                            continue;
+                        }
                         // Check if current Squad is Squad 1 or Squad 2 to move member.
                         if(session.isSqaudOne() ){
                             if(m.getPreferred_unit().equalsIgnoreCase("ground")){
@@ -125,7 +132,6 @@ public class SessionRefreshTask implements Runnable {
                     }
                     if(session.getActive_participants().size() >= 8){
                         session.setActive(true);
-
                     }
                 }
             }

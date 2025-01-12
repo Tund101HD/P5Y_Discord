@@ -62,9 +62,18 @@ public class SessionChatListener extends ListenerAdapter{
                 InputStream firstClone = new ByteArrayInputStream(baos.toByteArray());
                 InputStream secondClone = new ByteArrayInputStream(baos.toByteArray());
                 JsonObject detections =  YoloWrapper.getDetections(firstClone);
-                Mat[] mats = YoloWrapper.detectionsToImage(secondClone, detections);
-                MessageEmbed embed = recognizer.recognizeFriendlyPlayerScores(mats[1], mats[0]);
-                event.getChannel().sendMessageEmbeds(embed).queue();
+
+              //  Mat[] mats = YoloWrapper.detectionsToImage(secondClone, detections);
+               // BufferedImage image2 = YoloWrapper.Mat2BufferedImage(mats[1].clone());
+              //  File file2 = new File("src/main/resources/temp2_image_"+System.currentTimeMillis()+".jpg");
+              //  ImageIO.write(image2, "jpg", file2);
+              //  BufferedImage image4 = YoloWrapper.Mat2BufferedImage(mats[0].clone());
+              //  File file4 = new File("src/main/resources/temp4_image_"+System.currentTimeMillis()+".jpg");
+              //  ImageIO.write(image4, "jpg", file4);
+
+               //  MessageEmbed embed = recognizer.recognizeFriendlyPlayerScores(mats[1], mats[0]);
+               // event.getChannel().sendMessageEmbeds(embed).queue();
+
                // event.getChannel().sendMessageEmbeds(recognizer.recognizeEnemyPlayerScores(mats[3], mats[2], embed.getTitle().split("\\|")[1].split(":")[1].stripLeading())).queue(); //TODO Maybe train custom OCR model in https://cloud.google.com/use-cases/ocr?hl=en as gemini is retarded
             } catch (InterruptedException e) {
                 logger.error("Download of attachment was interrupted. Exiting");

@@ -124,7 +124,6 @@ public class startsession extends ListenerAdapter {
                 }
 
                 for (Map.Entry<SquadMember, Double> entry : sortedMap.entrySet()) {
-                    // Move into the corresponding channels, determined by preferred unit.
                     if (entry.getKey().getPreferred_unit().equalsIgnoreCase("ground")) {
                         if (isSquadOne(session.getLeader_id())) {
                             Main.bot.getGuildById(Main.GUILD_ID).moveVoiceMember(Main.bot.getGuildById(Main.GUILD_ID).getMemberById(entry.getKey().getDiscord_id()),

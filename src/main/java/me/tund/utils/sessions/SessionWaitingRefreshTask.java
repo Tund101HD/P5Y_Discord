@@ -24,7 +24,7 @@ public class SessionWaitingRefreshTask implements Runnable{
               Main.sessionHandler.waiting_sessions.remove(member);
               Main.bot.getUserById(member.getDiscord_id()).openPrivateChannel().flatMap(privateChannel -> privateChannel.sendMessage("Du wurdest auf Grund von" +
                       " Inaktivität aus der Liste der wartenden Spieler entfernt. Bitte vergewissere dich, dass du unter keinen Umständen gevollstummt, in keinem" +
-                      " Voicechannel oder dich im AFK-Bereich befindest. Falls du doch noch da bist, begib dich in einen der Channel und gibt ``/waiting <session_id>`` ein.")).queue();
+                      " Voicechannel oder dich im AFK-Bereich befindest. Falls du doch noch da bist, begib dich in einen der Channel und gibt ``/waiting`` ein.")).queue();
           }
         }
     }
