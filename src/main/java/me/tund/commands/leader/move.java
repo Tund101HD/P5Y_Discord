@@ -127,7 +127,9 @@ public class move extends ListenerAdapter {
                 eb.setFooter("move_squad");
                 return privateChannel.sendMessage("").addEmbeds(eb.build());
             }).queue();
-            //TODO LOCK SESSION
+            currentSession.setLocked(true);
+            handler.updateSession(currentSession);
+            handler.updateSession(inputSession);
         }else{
             event.getHook().editOriginal("Sorry, aber diese Session ist voll.").queue();
             logger.info("Session has filled up during move process! Will not proceed.");

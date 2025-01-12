@@ -75,7 +75,7 @@ public class joinsession extends ListenerAdapter {
                 flatMap(channel -> channel.sendMessage("Es wurde leider keine passende Session für dich gefunden, in die du beitreten kannst, da du entweder nicht die Anforderungen triffst oder alle Sessions bereits voll sind.")).queue();
         if(!Main.bot.getGuildById(Main.GUILD_ID).getMemberById(member.getDiscord_id()).getVoiceState().inAudioChannel()){
             Main.bot.getUserById(member.getDiscord_id()).openPrivateChannel().
-                    flatMap(channel -> channel.sendMessage("Da du in keinem Sprachkanal bist wurdest du nicht auf die Warteliste gesetzt. Bitte begib dich in einen Sprachkanal und führe den Befehl noch einmal aus, oder begib dich in den Warteraum um automatisch auf die Warteliste gesetzt zu werden. Du kannst danach in einen anderen Sprachkanal wechseln.")).queue();
+                    flatMap(channel -> channel.sendMessage("Da du in keinem Sprachkanal bist, wurdest du nicht auf die Warteliste gesetzt. Bitte begib dich in einen Sprachkanal und führe den Befehl noch einmal aus, oder begib dich in den Warteraum um automatisch auf die Warteliste gesetzt zu werden. Du kannst danach in einen anderen Sprachkanal wechseln.")).queue();
             return;
         }
         Main.bot.getUserById(member.getDiscord_id()).openPrivateChannel().

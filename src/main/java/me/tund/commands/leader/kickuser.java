@@ -23,7 +23,7 @@ import java.util.stream.Stream;
 public class kickuser extends ListenerAdapter {
     private Database db = new Database();
     private final SessionHandler handler;
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-startsession-Command");
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger("P5Y-kickuser-Command");
 
     public kickuser(SessionHandler handler) {
         this.handler = handler;
@@ -33,7 +33,7 @@ public class kickuser extends ListenerAdapter {
     public void onSlashCommandInteraction(@NotNull SlashCommandInteractionEvent event) {
         if(event.getUser().isBot()) return;
         if(!event.getName().equalsIgnoreCase("kickuser")) return;
-        event.deferReply().queue();
+        event.deferReply().setEphemeral(true).queue();
         if (!event.getMember().getRoles().contains(Main.bot.getRoleById(Main.SL_ROLE))) {
             event.getHook().editOriginal("Sorry, aber du bist kein Squad-Leader.").queue();
             return;
@@ -92,6 +92,8 @@ public class kickuser extends ListenerAdapter {
         logger.info("User {}({}) has been kicked from Session {} with reason: {}", m.getEffectiveName(), m.getId(), s.getSession_id(), reason);
         if(ban) logger.info("User {}({}) has been banned from Session {}", m.getEffectiveName(), m.getId(), s.getSession_id());
         if(autofill) logger.info("Autofilling Session {}",s.getSession_id());
+        event.getHook().editOriginal("Du hast einen Nutzer aus deiner Session gekickt.").queue();
+        handler.updateSession(s);
     }
 
     @Override

@@ -198,6 +198,7 @@ public class startsession extends ListenerAdapter {
                                     "``/endsession``. Bitte beachte das Nachrichten und Tags nicht wieder zurückgezogen werden können!")).queue();
                 }
             }
+            handler.updateSession(session);
         }
     }
 

@@ -14,6 +14,8 @@ public class Session {
     protected long LAST_ACTIVE = 0;
     protected boolean isClosing = false; // Is the session marked for close?
     protected boolean LOCKED = false;
+    protected long LOCKED_AT = 0L;
+
     private Date end_time;
     private List<Long> participants = new ArrayList<>();
     private List<Long> active_participants = new ArrayList<>();
@@ -248,9 +250,15 @@ public class Session {
      * @return
      */
     public boolean isLocked() {
-            return LOCKED;
+        return LOCKED;
     }
     public void setLocked(boolean locked){
         LOCKED = locked;
+        if(locked)
+            LOCKED_AT = System.currentTimeMillis();
+    }
+
+    public long getLOCKED_AT() {
+        return LOCKED_AT;
     }
 }

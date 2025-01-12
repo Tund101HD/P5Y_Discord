@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import me.tund.database.Database;
 import me.tund.database.SquadMember;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.LoggerFactory;
@@ -135,7 +136,7 @@ public class SessionHandler {
         saveSessionToJson(convertSessionToJson(session));
     }
 
-    public boolean saveAndCloseSession(Session session) {
+    public boolean saveAndCloseSession(@NotNull Session session) {
         DateTime time = new DateTime(System.currentTimeMillis(), DateTimeZone.forTimeZone(TimeZone.getTimeZone("UTC+02:00")));
         session.setEnd_time(new Date(time.getMillis()));
         removeSessionFromJson(convertSessionToJson(session)); //remove session with ID
